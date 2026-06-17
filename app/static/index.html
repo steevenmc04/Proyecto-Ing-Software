@@ -1,0 +1,500 @@
+<!doctype html>
+<!--
+Archivo: app/static/index.html
+Descripcion: Pagina web local para probar el Sistema de Gestion de Caja de Ahorros.
+Autor: Martinez Steeven
+Version: 1.0
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sistema de Gestion de Caja de Ahorros</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --fondo: #f4f7f6;
+      --panel: #ffffff;
+      --borde: #d8e1df;
+      --texto: #14211f;
+      --muted: #66736f;
+      --verde: #0f766e;
+      --verde-oscuro: #115e59;
+      --ambar: #b7791f;
+      --rojo: #b42318;
+      --azul: #1d4ed8;
+      --sombra: 0 10px 24px rgba(20, 33, 31, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--fondo);
+      color: var(--texto);
+    }
+
+    header {
+      background: #10201d;
+      color: #fff;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 17px;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .acciones-header {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .boton, button {
+      border: 0;
+      border-radius: 6px;
+      background: var(--verde);
+      color: #fff;
+      padding: 10px 13px;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 38px;
+    }
+
+    .boton:hover, button:hover { background: var(--verde-oscuro); }
+    .boton.secundario, button.secundario { background: #263633; }
+    .boton.azul, button.azul { background: var(--azul); }
+    .boton.ambar, button.ambar { background: var(--ambar); }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 22px auto 36px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      box-shadow: var(--sombra);
+      padding: 16px;
+    }
+
+    .col-4 { grid-column: span 4; }
+    .col-6 { grid-column: span 6; }
+    .col-8 { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+
+    .metricas {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metrica {
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfdfc;
+      min-height: 86px;
+    }
+
+    .metrica span {
+      color: var(--muted);
+      font-size: 12px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .metrica strong {
+      font-size: 24px;
+      display: block;
+    }
+
+    form {
+      display: grid;
+      gap: 10px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid var(--borde);
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 14px;
+      min-height: 38px;
+      background: #fff;
+      color: var(--texto);
+    }
+
+    .fila {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .estado {
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      font-size: 13px;
+      min-height: 38px;
+    }
+
+    .estado.error {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: var(--rojo);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--borde);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      background: #f8faf9;
+    }
+
+    .tabla-scroll {
+      overflow-x: auto;
+      max-height: 320px;
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #10201d;
+      color: #e7f5f1;
+      padding: 12px;
+      border-radius: 8px;
+      min-height: 160px;
+      max-height: 320px;
+      overflow: auto;
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .col-4, .col-6, .col-8 { grid-column: span 12; }
+      .metricas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      header { padding: 16px; }
+      main { width: calc(100% - 20px); }
+      .fila, .metricas { grid-template-columns: 1fr; }
+      h1 { font-size: 19px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sistema de Gestion de Caja de Ahorros</h1>
+    <nav class="acciones-header">
+      <a class="boton secundario" href="/docs">Swagger</a>
+      <a class="boton secundario" href="/redoc">Redoc</a>
+      <a class="boton secundario" href="/salud">Salud</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="grid">
+      <div class="panel col-4">
+        <h2>Acceso</h2>
+        <form id="form-login">
+          <label>Usuario
+            <input name="nombre_usuario" value="admin" autocomplete="username" />
+          </label>
+          <label>Contrasena
+            <input name="contrasena" value="Admin123" type="password" autocomplete="current-password" />
+          </label>
+          <button type="submit">Ingresar</button>
+          <div id="estado-login" class="estado">Sesion pendiente</div>
+        </form>
+      </div>
+
+      <div class="panel col-8">
+        <h2>Resumen</h2>
+        <div class="metricas">
+          <div class="metrica"><span>Socios</span><strong id="m-socios">0</strong></div>
+          <div class="metrica"><span>Cuentas</span><strong id="m-cuentas">0</strong></div>
+          <div class="metrica"><span>Transacciones</span><strong id="m-transacciones">0</strong></div>
+          <div class="metrica"><span>Creditos</span><strong id="m-creditos">0</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel col-6">
+        <h2>Nuevo socio</h2>
+        <form id="form-socio">
+          <div class="fila">
+            <label>Cedula <input name="cedula" required /></label>
+            <label>Telefono <input name="telefono" value="0990000000" required /></label>
+          </div>
+          <div class="fila">
+            <label>Nombres <input name="nombres" value="Cliente" required /></label>
+            <label>Apellidos <input name="apellidos" value="Demo" required /></label>
+          </div>
+          <div class="fila">
+            <label>Fecha nacimiento <input name="fecha_nacimiento" type="date" value="1998-01-15" required /></label>
+            <label>Correo <input name="correo" type="email" required /></label>
+          </div>
+          <label>Direccion <input name="direccion" value="Direccion de prueba" required /></label>
+          <button type="submit">Crear socio</button>
+        </form>
+      </div>
+
+      <div class="panel col-6">
+        <h2>Cuenta y movimiento</h2>
+        <form id="form-movimiento">
+          <div class="fila">
+            <label>Socio
+              <select name="socio_id" id="select-socio"></select>
+            </label>
+            <label>Cuenta
+              <select name="cuenta_id" id="select-cuenta"></select>
+            </label>
+          </div>
+          <div class="fila">
+            <button class="azul" id="crear-cuenta" type="button">Crear cuenta</button>
+            <label>Monto <input name="monto" value="100.00" required /></label>
+          </div>
+          <div class="fila">
+            <button type="submit" data-tipo="deposito">Deposito</button>
+            <button class="ambar" type="submit" data-tipo="retiro">Retiro</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel col-6">
+        <h2>API externa</h2>
+        <form id="form-externa">
+          <div class="fila">
+            <label>Cedula <input name="cedula" value="0102030405" required /></label>
+            <label>Cuenta <input name="numeroCuenta" value="CTA-000001" required /></label>
+          </div>
+          <label>API Key <input name="api_key" value="API-KEY-DEMO-123" required /></label>
+          <button type="submit">Consultar</button>
+        </form>
+      </div>
+
+      <div class="panel col-6">
+        <h2>Respuesta</h2>
+        <pre id="salida">Sin datos</pre>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel col-6">
+        <h2>Socios</h2>
+        <div class="tabla-scroll">
+          <table>
+            <thead><tr><th>ID</th><th>Cedula</th><th>Nombre</th><th>Estado</th></tr></thead>
+            <tbody id="tabla-socios"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel col-6">
+        <h2>Transacciones</h2>
+        <div class="tabla-scroll">
+          <table>
+            <thead><tr><th>Tipo</th><th>Monto</th><th>Saldo</th><th>Cuenta</th></tr></thead>
+            <tbody id="tabla-transacciones"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const salida = document.querySelector("#salida");
+    const estadoLogin = document.querySelector("#estado-login");
+    let token = "";
+    let socios = [];
+    let cuentas = [];
+
+    function mostrar(data) {
+      salida.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
+    }
+
+    function errorEstado(elemento, mensaje) {
+      elemento.textContent = mensaje;
+      elemento.classList.add("error");
+    }
+
+    function okEstado(elemento, mensaje) {
+      elemento.textContent = mensaje;
+      elemento.classList.remove("error");
+    }
+
+    async function api(ruta, opciones = {}) {
+      const headers = opciones.headers || {};
+      if (token) headers.Authorization = `Bearer ${token}`;
+      if (opciones.body && !headers["Content-Type"]) headers["Content-Type"] = "application/json";
+      const respuesta = await fetch(ruta, { ...opciones, headers });
+      const texto = await respuesta.text();
+      const data = texto ? JSON.parse(texto) : {};
+      if (!respuesta.ok) throw data;
+      return data;
+    }
+
+    function llenarSelects() {
+      const selectSocio = document.querySelector("#select-socio");
+      const selectCuenta = document.querySelector("#select-cuenta");
+      selectSocio.innerHTML = socios.map(s => `<option value="${s.id}">${s.id} - ${s.nombres} ${s.apellidos}</option>`).join("");
+      selectCuenta.innerHTML = cuentas.map(c => `<option value="${c.id}">${c.numero_cuenta} - ${c.saldo}</option>`).join("");
+    }
+
+    function renderSocios() {
+      document.querySelector("#tabla-socios").innerHTML = socios.map(s => `
+        <tr><td>${s.id}</td><td>${s.cedula}</td><td>${s.nombres} ${s.apellidos}</td><td>${s.estado}</td></tr>
+      `).join("");
+    }
+
+    async function cargarTodo() {
+      try {
+        socios = await api("/api/v1/socios");
+        cuentas = await api("/api/v1/cuentas");
+        const transacciones = await api("/api/v1/transacciones");
+        const creditos = await api("/api/v1/creditos");
+
+        document.querySelector("#m-socios").textContent = socios.length;
+        document.querySelector("#m-cuentas").textContent = cuentas.length;
+        document.querySelector("#m-transacciones").textContent = transacciones.length;
+        document.querySelector("#m-creditos").textContent = creditos.length;
+
+        renderSocios();
+        llenarSelects();
+        document.querySelector("#tabla-transacciones").innerHTML = transacciones.slice(0, 20).map(t => `
+          <tr><td>${t.tipo_transaccion}</td><td>${t.monto}</td><td>${t.saldo_resultante}</td><td>${t.cuenta_id}</td></tr>
+        `).join("");
+      } catch (error) {
+        mostrar(error);
+      }
+    }
+
+    document.querySelector("#form-login").addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      const datos = Object.fromEntries(new FormData(evento.currentTarget));
+      try {
+        const respuesta = await api("/api/v1/auth/login", { method: "POST", body: JSON.stringify(datos) });
+        token = respuesta.access_token;
+        okEstado(estadoLogin, `Sesion: ${respuesta.usuario.nombre_usuario}`);
+        mostrar(respuesta);
+        await cargarTodo();
+      } catch (error) {
+        errorEstado(estadoLogin, "Credenciales invalidas");
+        mostrar(error);
+      }
+    });
+
+    document.querySelector("#form-socio").addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      const datos = Object.fromEntries(new FormData(evento.currentTarget));
+      try {
+        const socio = await api("/api/v1/socios", { method: "POST", body: JSON.stringify(datos) });
+        mostrar(socio);
+        await cargarTodo();
+      } catch (error) {
+        mostrar(error);
+      }
+    });
+
+    document.querySelector("#crear-cuenta").addEventListener("click", async () => {
+      const socio_id = Number(document.querySelector("#select-socio").value);
+      if (!socio_id) return mostrar("No hay socio seleccionado");
+      try {
+        const cuenta = await api("/api/v1/cuentas", { method: "POST", body: JSON.stringify({ socio_id }) });
+        mostrar(cuenta);
+        await cargarTodo();
+      } catch (error) {
+        mostrar(error);
+      }
+    });
+
+    document.querySelector("#form-movimiento").addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      const boton = evento.submitter;
+      const datos = Object.fromEntries(new FormData(evento.currentTarget));
+      const payload = { cuenta_id: Number(datos.cuenta_id), monto: datos.monto, descripcion: "Movimiento desde pagina local" };
+      try {
+        const movimiento = await api(`/api/v1/transacciones/${boton.dataset.tipo}`, { method: "POST", body: JSON.stringify(payload) });
+        mostrar(movimiento);
+        await cargarTodo();
+      } catch (error) {
+        mostrar(error);
+      }
+    });
+
+    document.querySelector("#form-externa").addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      const datos = Object.fromEntries(new FormData(evento.currentTarget));
+      const params = new URLSearchParams({ cedula: datos.cedula, numeroCuenta: datos.numeroCuenta });
+      try {
+        const respuesta = await api(`/api/v1/cuenta/movimientos?${params.toString()}`, {
+          headers: { "X-API-KEY": datos.api_key }
+        });
+        mostrar(respuesta);
+      } catch (error) {
+        mostrar(error);
+      }
+    });
+
+    cargarTodo();
+  </script>
+</body>
+</html>

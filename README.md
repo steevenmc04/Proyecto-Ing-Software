@@ -133,6 +133,63 @@ Tambien se puede ejecutar:
 python run.py
 ```
 
+## Levantar todo el proyecto localmente
+
+### Opcion rapida con SQLite
+
+```powershell
+cd C:\Users\steeven\Documents\ProyectoIngSoftware
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env
+python seed.py
+uvicorn app.main:app --reload
+```
+
+Abrir en el navegador:
+
+- Pagina funcional: http://127.0.0.1:8000
+- Swagger: http://127.0.0.1:8000/docs
+- Redoc: http://127.0.0.1:8000/redoc
+- Salud API: http://127.0.0.1:8000/salud
+
+### Opcion con MySQL Workbench
+
+```powershell
+cd C:\Users\steeven\Documents\ProyectoIngSoftware
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+Luego en MySQL Workbench ejecutar:
+
+```text
+database_mysql.sql
+```
+
+Crear `.env` y dejar activo:
+
+```env
+DATABASE_URL=mysql+pymysql://usuario_caja:ClaveCaja123@localhost:3306/caja_ahorros
+```
+
+Despues:
+
+```powershell
+python seed.py
+uvicorn app.main:app --reload
+```
+
+### Comandos utiles de limpieza
+
+```powershell
+Get-ChildItem -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
+Remove-Item -Recurse -Force .pytest_cache -ErrorAction SilentlyContinue
+Remove-Item -Force caja_ahorros.db -ErrorAction SilentlyContinue
+```
+
 ## Cargar datos de prueba
 
 ```bash

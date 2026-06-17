@@ -5,6 +5,8 @@ Version: 1.0
 """
 
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.config import obtener_configuracion
 from app.database import Base, engine
@@ -38,6 +40,8 @@ app = FastAPI(
     ),
 )
 
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
 app.include_router(auth_rutas.router, prefix="/api/v1/auth", tags=["Autenticacion"])
 app.include_router(usuario_rutas.router, prefix="/api/v1/usuarios", tags=["Usuarios"])
 app.include_router(socio_rutas.router, prefix="/api/v1/socios", tags=["Socios"])
@@ -51,9 +55,15 @@ app.include_router(reporte_rutas.router, prefix="/api/v1/reportes", tags=["Repor
 app.include_router(api_externa_rutas.router, prefix="/api/v1/cuenta", tags=["API externa"])
 
 
-@app.get("/", tags=["Salud"], summary="Verificar estado de la API")
+@app.get("/", include_in_schema=False)
+def pagina_inicio():
+    """Sirve la pagina web local para probar el proyecto desde el navegador."""
+
+    return FileResponse("app/static/index.html")
+
+
+@app.get("/salud", tags=["Salud"], summary="Verificar estado de la API")
 def raiz():
     """Confirma que la API esta operativa y muestra las rutas de documentacion."""
 
     return {"mensaje": "Sistema de Gestion de Caja de Ahorros API", "swagger": "/docs", "redoc": "/redoc"}
-
