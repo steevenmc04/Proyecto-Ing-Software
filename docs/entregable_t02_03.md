@@ -40,3 +40,6 @@ El backend utiliza una estructura modelo, repositorio, servicio, controlador y r
 
 Ver archivo `docs/conclusiones.md`.
 
+## Rubrica De Calificacion
+
+Ver archivo `docs/rubrica_cumplimiento.md`.
