@@ -4,6 +4,8 @@
 
 El proyecto aplica una arquitectura por capas:
 
+![Figura arquitectura T02.03](figura_arquitectura_t0203.svg)
+
 - `modelos`: entidades SQLAlchemy y relaciones de base de datos.
 - `esquemas`: schemas Pydantic para entrada y salida de datos.
 - `repositorios`: consultas y persistencia.
@@ -32,4 +34,3 @@ El proyecto aplica una arquitectura por capas:
 - Socio solicita creditos.
 - Credito tiene cuotas de amortizacion.
 - Transaccion, aportacion, desembolso y pago generan asientos contables.
-

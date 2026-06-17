@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Archivo: docs/figura_arquitectura_t0203.svg
+Descripcion: Figura de arquitectura modelo/repositorio/controlador/servicio del proyecto.
+Autor: Martinez Steeven
+Version: 1.0
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="950" viewBox="0 0 1600 950">
+  <defs>
+    <style>
+      .titulo { font-family: Arial, Helvetica, sans-serif; font-size: 30px; font-weight: 700; fill: #17211f; }
+      .subtitulo { font-family: Arial, Helvetica, sans-serif; font-size: 16px; fill: #52615d; }
+      .caja { stroke: #9fb2ad; stroke-width: 2; rx: 10; ry: 10; }
+      .cabecera { font-family: Arial, Helvetica, sans-serif; font-size: 17px; font-weight: 700; fill: #17211f; }
+      .texto { font-family: Arial, Helvetica, sans-serif; font-size: 14px; fill: #1f2d2a; }
+      .nota { font-family: Arial, Helvetica, sans-serif; font-size: 12px; fill: #52615d; }
+      .flecha { stroke: #53635f; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+      .flecha-doble { stroke: #53635f; stroke-width: 2.2; fill: none; marker-start: url(#arrow-start); marker-end: url(#arrow); }
+      .linea { stroke: #d2dedb; stroke-width: 1.4; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#53635f"/>
+    </marker>
+    <marker id="arrow-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 10 0 L 0 5 L 10 10 z" fill="#53635f"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="950" fill="#f6faf9"/>
+  <text x="70" y="55" class="titulo">Sistema de Gestion de Caja de Ahorros - Arquitectura Backend</text>
+  <text x="70" y="82" class="subtitulo">Esquema modelo / repositorio / servicio / controlador aplicado con FastAPI, SQLAlchemy, Pydantic y Swagger</text>
+
+  <!-- Entrada -->
+  <rect x="70" y="130" width="280" height="155" fill="#e9f7f4" class="caja"/>
+  <text x="95" y="165" class="cabecera">Cliente / Navegador</text>
+  <line x1="90" y1="180" x2="330" y2="180" class="linea"/>
+  <text x="95" y="210" class="texto">app/static/index.html</text>
+  <text x="95" y="234" class="texto">Login con JWT</text>
+  <text x="95" y="258" class="texto">Menu desplegable por modulo</text>
+
+  <rect x="70" y="335" width="280" height="135" fill="#eef2ff" class="caja"/>
+  <text x="95" y="370" class="cabecera">Documentacion API</text>
+  <line x1="90" y1="385" x2="330" y2="385" class="linea"/>
+  <text x="95" y="415" class="texto">Swagger: /docs</text>
+  <text x="95" y="439" class="texto">Redoc: /redoc</text>
+
+  <!-- Rutas -->
+  <rect x="430" y="110" width="300" height="230" fill="#fff7ed" class="caja"/>
+  <text x="455" y="145" class="cabecera">Rutas FastAPI</text>
+  <line x1="450" y1="160" x2="710" y2="160" class="linea"/>
+  <text x="455" y="190" class="texto">app/rutas/*_rutas.py</text>
+  <text x="455" y="214" class="texto">/api/v1/auth</text>
+  <text x="455" y="238" class="texto">/api/v1/socios</text>
+  <text x="455" y="262" class="texto">/api/v1/cuentas</text>
+  <text x="455" y="286" class="texto">/api/v1/transacciones</text>
+  <text x="455" y="310" class="texto">/api/v1/creditos, reportes, API externa</text>
+
+  <!-- Controladores -->
+  <rect x="800" y="110" width="300" height="230" fill="#fef2f2" class="caja"/>
+  <text x="825" y="145" class="cabecera">Controladores</text>
+  <line x1="820" y1="160" x2="1080" y2="160" class="linea"/>
+  <text x="825" y="190" class="texto">app/controladores/*_controlador.py</text>
+  <text x="825" y="214" class="texto">Reciben datos validados</text>
+  <text x="825" y="238" class="texto">Delegan a servicios</text>
+  <text x="825" y="262" class="texto">Devuelven respuesta REST</text>
+
+  <!-- Servicios -->
+  <rect x="1170" y="110" width="330" height="230" fill="#f3e8ff" class="caja"/>
+  <text x="1195" y="145" class="cabecera">Servicios</text>
+  <line x1="1190" y1="160" x2="1480" y2="160" class="linea"/>
+  <text x="1195" y="190" class="texto">app/servicios/*_servicio.py</text>
+  <text x="1195" y="214" class="texto">Reglas de negocio</text>
+  <text x="1195" y="238" class="texto">Validaciones con HTTPException</text>
+  <text x="1195" y="262" class="texto">Saldos, creditos, amortizacion</text>
+  <text x="1195" y="286" class="texto">Asientos contables automaticos</text>
+
+  <!-- Repositorios -->
+  <rect x="800" y="430" width="300" height="220" fill="#ecfdf5" class="caja"/>
+  <text x="825" y="465" class="cabecera">Repositorios</text>
+  <line x1="820" y1="480" x2="1080" y2="480" class="linea"/>
+  <text x="825" y="510" class="texto">app/repositorios/*_repositorio.py</text>
+  <text x="825" y="534" class="texto">Consultas SQLAlchemy</text>
+  <text x="825" y="558" class="texto">CRUD base</text>
+  <text x="825" y="582" class="texto">Buscar por cedula, socio, cuenta</text>
+  <text x="825" y="606" class="texto">Filtros por usuario SOCIO</text>
+
+  <!-- Modelos -->
+  <rect x="430" y="430" width="300" height="220" fill="#e0f2fe" class="caja"/>
+  <text x="455" y="465" class="cabecera">Modelos SQLAlchemy</text>
+  <line x1="450" y1="480" x2="710" y2="480" class="linea"/>
+  <text x="455" y="510" class="texto">app/modelos/*_modelo.py</text>
+  <text x="455" y="534" class="texto">Usuario, Socio</text>
+  <text x="455" y="558" class="texto">CuentaAhorro, Transaccion</text>
+  <text x="455" y="582" class="texto">Aportacion, Credito</text>
+  <text x="455" y="606" class="texto">CuotaAmortizacion, AsientoContable</text>
+
+  <!-- DB -->
+  <rect x="70" y="565" width="280" height="180" fill="#fefce8" class="caja"/>
+  <text x="95" y="600" class="cabecera">Base de Datos</text>
+  <line x1="90" y1="615" x2="330" y2="615" class="linea"/>
+  <text x="95" y="645" class="texto">SQLite local</text>
+  <text x="95" y="669" class="texto">MySQL Workbench preparado</text>
+  <text x="95" y="693" class="texto">DATABASE_URL</text>
+  <text x="95" y="717" class="texto">Relaciones con llaves foraneas</text>
+
+  <!-- Esquemas -->
+  <rect x="1170" y="430" width="330" height="220" fill="#f0fdf4" class="caja"/>
+  <text x="1195" y="465" class="cabecera">Esquemas Pydantic</text>
+  <line x1="1190" y1="480" x2="1480" y2="480" class="linea"/>
+  <text x="1195" y="510" class="texto">app/esquemas/*_esquema.py</text>
+  <text x="1195" y="534" class="texto">Request / Response</text>
+  <text x="1195" y="558" class="texto">Validacion de correo</text>
+  <text x="1195" y="582" class="texto">Validacion de montos</text>
+  <text x="1195" y="606" class="texto">Modelos visibles en Swagger</text>
+
+  <!-- Utilidades -->
+  <rect x="430" y="735" width="300" height="135" fill="#f1f5f9" class="caja"/>
+  <text x="455" y="770" class="cabecera">Utilidades</text>
+  <line x1="450" y1="785" x2="710" y2="785" class="linea"/>
+  <text x="455" y="815" class="texto">JWT y BCrypt</text>
+  <text x="455" y="839" class="texto">Generadores de codigos</text>
+
+  <rect x="800" y="735" width="300" height="135" fill="#fff1f2" class="caja"/>
+  <text x="825" y="770" class="cabecera">Reglas Clave</text>
+  <line x1="820" y1="785" x2="1080" y2="785" class="linea"/>
+  <text x="825" y="815" class="texto">Socio solo ve sus cuentas</text>
+  <text x="825" y="839" class="texto">Retiro valida saldo suficiente</text>
+
+  <rect x="1170" y="735" width="330" height="135" fill="#eef2ff" class="caja"/>
+  <text x="1195" y="770" class="cabecera">API Externa</text>
+  <line x1="1190" y1="785" x2="1480" y2="785" class="linea"/>
+  <text x="1195" y="815" class="texto">GET /api/v1/cuenta/movimientos</text>
+  <text x="1195" y="839" class="texto">Header X-API-KEY</text>
+
+  <!-- Flechas principales -->
+  <path d="M 350 205 L 430 205" class="flecha"/>
+  <path d="M 730 205 L 800 205" class="flecha"/>
+  <path d="M 1100 205 L 1170 205" class="flecha"/>
+  <path d="M 1335 340 L 1035 430" class="flecha"/>
+  <path d="M 800 540 L 730 540" class="flecha"/>
+  <path d="M 430 540 L 350 645" class="flecha-doble"/>
+  <path d="M 1170 520 L 1100 520" class="flecha"/>
+  <path d="M 580 735 L 720 650" class="flecha"/>
+  <path d="M 950 735 L 950 650" class="flecha"/>
+  <path d="M 1335 735 L 1335 650" class="flecha"/>
+  <path d="M 210 335 L 430 255" class="flecha"/>
+
+  <!-- Flujo -->
+  <text x="410" y="92" class="nota">HTTP / JSON</text>
+  <text x="748" y="92" class="nota">Control de entrada</text>
+  <text x="1120" y="92" class="nota">Logica de negocio</text>
+  <text x="1085" y="392" class="nota">Persistencia</text>
+  <text x="285" y="535" class="nota">Tablas</text>
+</svg>

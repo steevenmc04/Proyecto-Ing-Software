@@ -6,6 +6,7 @@ Esta carpeta contiene los documentos de soporte para cumplir la Tarea T02.03 Con
 
 - `requerimientos.md`: resumen de requerimientos funcionales y no funcionales.
 - `diseno.md`: resumen de arquitectura y decisiones de diseno.
+- `figura_arquitectura_t0203.svg`: imagen del esquema modelo/repositorio/controlador/servicio.
 - `tareas.md`: tareas de seguimiento por integrante/rol.
 - `evidencias.md`: evidencias de servicios, Swagger y ejecucion local.
 - `conclusiones.md`: conclusiones de la tarea en aproximadamente 200 palabras.
