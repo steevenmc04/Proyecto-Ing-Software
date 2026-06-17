@@ -14,6 +14,8 @@ class TransaccionRepositorio(RepositorioBase):
     """Repositorio de transacciones."""
 
     def __init__(self):
+        """Inicializa el repositorio con el modelo Transaccion."""
+
         super().__init__(Transaccion)
 
     def listar_por_cuenta(self, db: Session, cuenta_id: int, limit: int | None = None):
@@ -26,4 +28,3 @@ class TransaccionRepositorio(RepositorioBase):
 
 
 transaccion_repositorio = TransaccionRepositorio()
-

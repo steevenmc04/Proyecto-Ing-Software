@@ -14,6 +14,8 @@ class CuotaAmortizacionRepositorio(RepositorioBase):
     """Repositorio de cuotas de amortizacion."""
 
     def __init__(self):
+        """Inicializa el repositorio con el modelo CuotaAmortizacion."""
+
         super().__init__(CuotaAmortizacion)
 
     def listar_por_credito(self, db: Session, credito_id: int):
@@ -33,4 +35,3 @@ class CuotaAmortizacionRepositorio(RepositorioBase):
 
 
 cuota_amortizacion_repositorio = CuotaAmortizacionRepositorio()
-

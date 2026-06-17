@@ -16,6 +16,8 @@ class AsientoContableRepositorio(RepositorioBase):
     """Repositorio de asientos contables."""
 
     def __init__(self):
+        """Inicializa el repositorio con el modelo AsientoContable."""
+
         super().__init__(AsientoContable)
 
     def listar_rango_fechas(self, db: Session, fecha_inicio: date | None, fecha_fin: date | None):
@@ -30,4 +32,3 @@ class AsientoContableRepositorio(RepositorioBase):
 
 
 asiento_contable_repositorio = AsientoContableRepositorio()
-

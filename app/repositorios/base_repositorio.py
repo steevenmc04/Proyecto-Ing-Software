@@ -11,6 +11,8 @@ class RepositorioBase:
     """Repositorio generico para reducir codigo repetido."""
 
     def __init__(self, modelo):
+        """Inicializa el repositorio con el modelo SQLAlchemy que administrara."""
+
         self.modelo = modelo
 
     def listar(self, db: Session, skip: int = 0, limit: int = 100):
@@ -30,4 +32,3 @@ class RepositorioBase:
         db.commit()
         db.refresh(instancia)
         return instancia
-

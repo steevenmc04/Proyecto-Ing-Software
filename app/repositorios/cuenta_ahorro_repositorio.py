@@ -14,6 +14,8 @@ class CuentaAhorroRepositorio(RepositorioBase):
     """Repositorio de cuentas de ahorro."""
 
     def __init__(self):
+        """Inicializa el repositorio con el modelo CuentaAhorro."""
+
         super().__init__(CuentaAhorro)
 
     def obtener_por_numero(self, db: Session, numero_cuenta: str):
@@ -28,4 +30,3 @@ class CuentaAhorroRepositorio(RepositorioBase):
 
 
 cuenta_ahorro_repositorio = CuentaAhorroRepositorio()
-

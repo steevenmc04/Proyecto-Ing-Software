@@ -16,9 +16,12 @@ Los commits se separan por entregables:
 
 ## Verificacion
 
+El repositorio debe conservar como minimo 20 commits para evidenciar el avance
+iterativo del desarrollo. El conteo actual se debe consultar directamente desde
+Git para evitar que este documento quede desactualizado.
+
 Comando para contar commits:
 
 ```powershell
 git rev-list --count main
 ```
-

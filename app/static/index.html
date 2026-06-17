@@ -354,6 +354,7 @@ Version: 1.0
   </section>
 
   <script>
+    // Estado global de la sesion y datos cargados desde la API.
     const estadoLogin = document.querySelector("#estado-login");
     const estadoGlobal = document.querySelector("#estado-global");
     const vistas = document.querySelectorAll(".vista");
@@ -367,29 +368,35 @@ Version: 1.0
     let transacciones = [];
     let creditos = [];
 
+    // Muestra mensajes positivos en las barras de estado.
     function ok(elemento, mensaje) {
       elemento.textContent = mensaje;
       elemento.classList.remove("error");
     }
 
+    // Muestra errores de validacion o errores devueltos por el backend.
     function error(elemento, mensaje) {
       elemento.textContent = mensaje;
       elemento.classList.add("error");
     }
 
+    // Imprime respuestas JSON completas para depurar desde la interfaz.
     function mostrarJson(selector, data) {
       document.querySelector(selector).textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
     }
 
+    // Formatea valores monetarios devueltos por la base de datos.
     function dinero(valor) {
       return Number(valor || 0).toFixed(2);
     }
 
+    // Valida montos antes de enviarlos al backend.
     function validarMonto(valor) {
       const numero = Number(valor);
       return Number.isFinite(numero) && numero > 0;
     }
 
+    // Cliente HTTP centralizado: agrega JWT y convierte errores REST en excepciones.
     async function api(ruta, opciones = {}) {
       const headers = opciones.headers ? { ...opciones.headers } : {};
       if (token) headers.Authorization = `Bearer ${token}`;
@@ -405,6 +412,7 @@ Version: 1.0
       return usuario && usuario.rol === "SOCIO";
     }
 
+    // Configura el menu y oculta formularios internos cuando entra un cliente socio.
     function configurarMenu() {
       const opciones = [
         ["dashboard", "Panel general"],
@@ -439,6 +447,7 @@ Version: 1.0
       document.querySelector(selector).innerHTML = filas.map(fila => `<tr>${columnas.map(col => `<td>${col(fila)}</td>`).join("")}</tr>`).join("");
     }
 
+    // Carga datos reales desde endpoints protegidos; para SOCIO usa rutas filtradas.
     async function cargarDatos() {
       const rutas = esSocio()
         ? ["/api/v1/socios/perfil/me", "/api/v1/cuentas/mis-cuentas", "/api/v1/transacciones/mis-transacciones", "/api/v1/creditos/mis-creditos"]
@@ -452,6 +461,7 @@ Version: 1.0
       renderizar();
     }
 
+    // Renderiza tablas, metricas y selects con la informacion recibida de la base.
     function renderizar() {
       document.querySelector("#m-socios").textContent = socios.length;
       document.querySelector("#m-cuentas").textContent = cuentas.length;
@@ -510,6 +520,7 @@ Version: 1.0
       }
     }
 
+    // Flujo de autenticacion: obtiene JWT y habilita el panel principal.
     document.querySelector("#form-login").addEventListener("submit", async evento => {
       evento.preventDefault();
       const datos = Object.fromEntries(new FormData(evento.currentTarget));
@@ -529,6 +540,7 @@ Version: 1.0
       }
     });
 
+    // Cierre de sesion local: limpia token y regresa al login.
     document.querySelector("#btn-salir").addEventListener("click", () => {
       token = "";
       usuario = null;
@@ -540,6 +552,7 @@ Version: 1.0
     botonesMenu.forEach(boton => boton.addEventListener("click", () => cambiarVista(boton.dataset.vista)));
     menuSelect.addEventListener("change", evento => cambiarVista(evento.target.value));
 
+    // Registro de socios disponible para personal interno.
     document.querySelector("#form-socio").addEventListener("submit", async evento => {
       evento.preventDefault();
       const datos = Object.fromEntries(new FormData(evento.currentTarget));
@@ -553,6 +566,7 @@ Version: 1.0
       }
     });
 
+    // Apertura de cuenta asociada a un socio existente.
     document.querySelector("#form-cuenta").addEventListener("submit", async evento => {
       evento.preventDefault();
       const datos = Object.fromEntries(new FormData(evento.currentTarget));
@@ -565,6 +579,7 @@ Version: 1.0
       }
     });
 
+    // Registro de depositos y retiros con validacion previa de monto.
     document.querySelector("#form-movimiento").addEventListener("submit", async evento => {
       evento.preventDefault();
       const datos = Object.fromEntries(new FormData(evento.currentTarget));
@@ -583,6 +598,7 @@ Version: 1.0
       }
     });
 
+    // Solicitud de credito basica para el socio seleccionado.
     document.querySelector("#form-credito").addEventListener("submit", async evento => {
       evento.preventDefault();
       const datos = Object.fromEntries(new FormData(evento.currentTarget));
@@ -606,6 +622,7 @@ Version: 1.0
       }
     });
 
+    // Consulta reportes JSON publicados por el backend.
     document.querySelectorAll("[data-reporte]").forEach(boton => {
       boton.addEventListener("click", async () => {
         try {
@@ -618,6 +635,7 @@ Version: 1.0
       });
     });
 
+    // Consulta la API externa protegida por X-API-KEY.
     document.querySelector("#form-externa").addEventListener("submit", async evento => {
       evento.preventDefault();
       const datos = Object.fromEntries(new FormData(evento.currentTarget));

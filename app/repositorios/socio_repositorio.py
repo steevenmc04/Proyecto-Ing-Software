@@ -15,6 +15,8 @@ class SocioRepositorio(RepositorioBase):
     """Repositorio de socios."""
 
     def __init__(self):
+        """Inicializa el repositorio con el modelo Socio."""
+
         super().__init__(Socio)
 
     def obtener_por_cedula(self, db: Session, cedula: str):

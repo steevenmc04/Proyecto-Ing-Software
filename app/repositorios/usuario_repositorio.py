@@ -14,6 +14,8 @@ class UsuarioRepositorio(RepositorioBase):
     """Repositorio de usuarios."""
 
     def __init__(self):
+        """Inicializa el repositorio con el modelo Usuario."""
+
         super().__init__(Usuario)
 
     def obtener_por_nombre_usuario(self, db: Session, nombre_usuario: str):
@@ -28,4 +30,3 @@ class UsuarioRepositorio(RepositorioBase):
 
 
 usuario_repositorio = UsuarioRepositorio()
-

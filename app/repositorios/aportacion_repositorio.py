@@ -15,6 +15,8 @@ class TipoAportacionRepositorio(RepositorioBase):
     """Repositorio del catalogo de tipos de aportacion."""
 
     def __init__(self):
+        """Inicializa el repositorio con el modelo TipoAportacion."""
+
         super().__init__(TipoAportacion)
 
     def obtener_por_nombre(self, db: Session, nombre):
@@ -27,6 +29,8 @@ class AportacionRepositorio(RepositorioBase):
     """Repositorio de aportaciones."""
 
     def __init__(self):
+        """Inicializa el repositorio con el modelo Aportacion."""
+
         super().__init__(Aportacion)
 
     def listar_por_socio(self, db: Session, socio_id: int):
@@ -37,4 +41,3 @@ class AportacionRepositorio(RepositorioBase):
 
 tipo_aportacion_repositorio = TipoAportacionRepositorio()
 aportacion_repositorio = AportacionRepositorio()
-

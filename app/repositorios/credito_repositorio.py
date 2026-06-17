@@ -14,6 +14,8 @@ class CreditoRepositorio(RepositorioBase):
     """Repositorio de creditos."""
 
     def __init__(self):
+        """Inicializa el repositorio con el modelo Credito."""
+
         super().__init__(Credito)
 
     def listar_por_socio(self, db: Session, socio_id: int):
@@ -23,4 +25,3 @@ class CreditoRepositorio(RepositorioBase):
 
 
 credito_repositorio = CreditoRepositorio()
-
