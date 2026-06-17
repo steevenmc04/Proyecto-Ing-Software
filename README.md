@@ -52,12 +52,30 @@ sistema-caja-ahorros-backend/
 |   |-- rutas/
 |   `-- utilidades/
 |-- tests/
+|-- docs/
 |-- seed.py
 |-- requirements.txt
 |-- README.md
 |-- .env.example
 |-- .gitignore
 `-- run.py
+```
+
+## Documentacion academica T02.03
+
+La carpeta `docs/` contiene los documentos solicitados por la tarea:
+
+- Requerimientos del sistema.
+- Diseno y arquitectura.
+- Tareas de seguimiento.
+- Evidencias de funcionamiento.
+- Conclusiones de 200 palabras.
+- PDF de soporte para AVAC.
+
+Archivo PDF generado:
+
+```text
+docs/T02_03_GrupoXX_MartinezSteeven.pdf
 ```
 
 ## Instalacion paso a paso
