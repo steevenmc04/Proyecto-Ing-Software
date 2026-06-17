@@ -1,0 +1,164 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1727 >>
+stream
+BT
+/F1 11 Tf
+50 800 Td
+(Tarea T02.03 - Construccion De Aplicacion De Software) Tj
+0 -17 Td
+0 -17 Td
+(Datos Generales) Tj
+0 -17 Td
+0 -17 Td
+(- Grupo base: Grupo XX) Tj
+0 -17 Td
+(- Integrante: Martinez Steeven) Tj
+0 -17 Td
+(- Proyecto: Sistema de Gestion de Caja de Ahorros) Tj
+0 -17 Td
+(- Repositorio: https://github.com/steevenmc04/Proyecto-Ing-Software) Tj
+0 -17 Td
+0 -17 Td
+(Objetivo) Tj
+0 -17 Td
+0 -17 Td
+(Crear una aplicacion backend funcional utilizando herramientas de Ingenieria de Software,) Tj
+0 -17 Td
+(aplicando arquitectura por capas, servicios REST, documentacion Swagger y control de) Tj
+0 -17 Td
+(versiones con GitHub.) Tj
+0 -17 Td
+0 -17 Td
+(Framework Utilizado) Tj
+0 -17 Td
+0 -17 Td
+(FastAPI.) Tj
+0 -17 Td
+0 -17 Td
+(Servicios Publicados) Tj
+0 -17 Td
+0 -17 Td
+(- Swagger: http://127.0.0.1:8000/docs) Tj
+0 -17 Td
+(- Redoc: http://127.0.0.1:8000/redoc) Tj
+0 -17 Td
+(- Pagina funcional: http://127.0.0.1:8000) Tj
+0 -17 Td
+0 -17 Td
+(Arquitectura) Tj
+0 -17 Td
+0 -17 Td
+(El backend utiliza una estructura modelo, repositorio, servicio, controlador y ruta. Esta) Tj
+0 -17 Td
+(organizacion separa responsabilidades y permite mantener reglas de negocio independientes) Tj
+0 -17 Td
+(de la capa HTTP.) Tj
+0 -17 Td
+0 -17 Td
+(Evidencias De Cumplimiento) Tj
+0 -17 Td
+0 -17 Td
+(- Repositorio documentado con README y carpeta docs.) Tj
+0 -17 Td
+(- Backend funcional con FastAPI.) Tj
+0 -17 Td
+(- Servicios documentados con Swagger.) Tj
+0 -17 Td
+(- Base de datos relacional mediante SQLAlchemy.) Tj
+0 -17 Td
+(- Soporte para SQLite y MySQL Workbench.) Tj
+0 -17 Td
+(- Pruebas basicas con pytest.) Tj
+0 -17 Td
+(- Pagina funcional con login, menu y control por rol.) Tj
+0 -17 Td
+(- API externa protegida con X-API-KEY.) Tj
+0 -17 Td
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1883 >>
+stream
+BT
+/F1 11 Tf
+50 800 Td
+(Conclusiones) Tj
+0 -17 Td
+0 -17 Td
+(Ver archivo docs/conclusiones.md.) Tj
+0 -17 Td
+0 -17 Td
+0 -17 Td
+0 -17 Td
+(Conclusiones) Tj
+0 -17 Td
+0 -17 Td
+(El desarrollo de la Tarea T02.03 permitio transformar los requerimientos y el diseno del) Tj
+0 -17 Td
+(Sistema de Gestion de Caja de Ahorros en una aplicacion backend funcional. Durante la) Tj
+0 -17 Td
+(implementacion se aplico una arquitectura por capas que separa modelos, repositorios,) Tj
+0 -17 Td
+(servicios, controladores y rutas, lo que facilita el mantenimiento y la comprension del) Tj
+0 -17 Td
+(codigo. FastAPI resulto adecuado para publicar servicios REST documentados con Swagger,) Tj
+0 -17 Td
+(mientras que SQLAlchemy permitio representar relaciones reales entre usuarios, socios,) Tj
+0 -17 Td
+(cuentas, transacciones, aportaciones, creditos, cuotas y asientos contables.) Tj
+0 -17 Td
+0 -17 Td
+(La construccion tambien evidencio la importancia de validar reglas de negocio desde el) Tj
+0 -17 Td
+(backend, especialmente en operaciones financieras como retiros, aportaciones, creditos y) Tj
+0 -17 Td
+(pagos. Adicionalmente, la incorporacion de autenticacion JWT y restricciones por rol) Tj
+0 -17 Td
+(permite que los socios consulten solo su informacion asociada, mejorando la seguridad del) Tj
+0 -17 Td
+(sistema. Las pruebas automatizadas con pytest ayudan a verificar que los flujos principales) Tj
+0 -17 Td
+(funcionen correctamente y reducen el riesgo de errores al modificar el proyecto.) Tj
+0 -17 Td
+(Finalmente, el uso de GitHub como repositorio permite evidenciar el avance del trabajo,) Tj
+0 -17 Td
+(documentar la solucion y mantener un historial de cambios organizado para la entrega) Tj
+0 -17 Td
+(academica. Esta experiencia consolido buenas practicas de documentacion, verificacion) Tj
+0 -17 Td
+(continua y despliegue local reproducible para futuras iteraciones del sistema academico.) Tj
+ET
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000000317 00000 n 
+0000002096 00000 n 
+0000002222 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+4157
+%%EOF
