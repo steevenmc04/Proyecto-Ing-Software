@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
 Archivo: app/static/index.html
-Descripcion: Pagina web local para probar el Sistema de Gestion de Caja de Ahorros.
+Descripcion: Interfaz web local con login, menu y vistas del sistema.
 Autor: Martinez Steeven
 Version: 1.0
 -->
@@ -13,376 +13,385 @@ Version: 1.0
   <style>
     :root {
       color-scheme: light;
-      --fondo: #f4f7f6;
+      --fondo: #eef3f1;
       --panel: #ffffff;
-      --borde: #d8e1df;
-      --texto: #14211f;
+      --linea: #d6e0dd;
+      --texto: #17211f;
       --muted: #66736f;
       --verde: #0f766e;
       --verde-oscuro: #115e59;
-      --ambar: #b7791f;
-      --rojo: #b42318;
       --azul: #1d4ed8;
-      --sombra: 0 10px 24px rgba(20, 33, 31, 0.08);
+      --ambar: #a16207;
+      --rojo: #b42318;
+      --sombra: 0 12px 28px rgba(23, 33, 31, .08);
     }
 
     * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--fondo); color: var(--texto); }
+    button, input, select { font: inherit; }
+    button { border: 0; border-radius: 6px; background: var(--verde); color: #fff; padding: 10px 13px; font-weight: 700; cursor: pointer; min-height: 38px; }
+    button:hover { background: var(--verde-oscuro); }
+    button.secundario { background: #273633; }
+    button.azul { background: var(--azul); }
+    button.ambar { background: var(--ambar); }
+    button.rojo { background: var(--rojo); }
+    a { color: inherit; text-decoration: none; }
+    h1, h2, h3 { margin: 0; letter-spacing: 0; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 18px; }
+    h3 { font-size: 15px; margin-bottom: 10px; }
 
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--fondo);
-      color: var(--texto);
+    .login-page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #10201d 0%, #f2f7f5 55%);
     }
 
-    header {
+    .login-card {
+      width: min(420px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--linea);
+      border-radius: 8px;
+      box-shadow: var(--sombra);
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .login-card p { margin: 0; color: var(--muted); line-height: 1.45; }
+    .oculto { display: none !important; }
+
+    .app-shell { min-height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+    .barra {
       background: #10201d;
       color: #fff;
-      padding: 18px 24px;
+      padding: 14px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
     }
 
-    h1 {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0;
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      font-size: 17px;
-      letter-spacing: 0;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .acciones-header {
-      display: flex;
+    .usuario-box { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: #dcebe7; font-size: 13px; }
+    .layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 0; }
+    .menu {
+      background: #fff;
+      border-right: 1px solid var(--linea);
+      padding: 16px;
+      display: grid;
+      align-content: start;
       gap: 10px;
-      flex-wrap: wrap;
     }
 
-    .boton, button {
-      border: 0;
+    .menu select {
+      width: 100%;
+      border: 1px solid var(--linea);
       border-radius: 6px;
-      background: var(--verde);
-      color: #fff;
-      padding: 10px 13px;
-      font-weight: 700;
-      cursor: pointer;
-      min-height: 38px;
+      padding: 10px;
+      background: #fff;
     }
 
-    .boton:hover, button:hover { background: var(--verde-oscuro); }
-    .boton.secundario, button.secundario { background: #263633; }
-    .boton.azul, button.azul { background: var(--azul); }
-    .boton.ambar, button.ambar { background: var(--ambar); }
-
-    main {
-      width: min(1180px, calc(100% - 32px));
-      margin: 22px auto 36px;
-      display: grid;
-      gap: 16px;
+    .menu button {
+      width: 100%;
+      text-align: left;
+      background: #f7faf9;
+      color: var(--texto);
+      border: 1px solid var(--linea);
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 16px;
-    }
-
+    .menu button.activo { background: var(--verde); color: #fff; border-color: var(--verde); }
+    main { padding: 18px; display: grid; gap: 16px; align-content: start; }
     .panel {
       background: var(--panel);
-      border: 1px solid var(--borde);
+      border: 1px solid var(--linea);
       border-radius: 8px;
       box-shadow: var(--sombra);
       padding: 16px;
     }
 
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+    .col-3 { grid-column: span 3; }
     .col-4 { grid-column: span 4; }
     .col-6 { grid-column: span 6; }
     .col-8 { grid-column: span 8; }
     .col-12 { grid-column: span 12; }
 
-    .metricas {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-    }
-
     .metrica {
-      border: 1px solid var(--borde);
+      border: 1px solid var(--linea);
       border-radius: 8px;
-      padding: 12px;
+      padding: 14px;
       background: #fbfdfc;
-      min-height: 86px;
+      min-height: 92px;
     }
+    .metrica span { display: block; color: var(--muted); font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+    .metrica strong { display: block; font-size: 26px; }
 
-    .metrica span {
-      color: var(--muted);
-      font-size: 12px;
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    .metrica strong {
-      font-size: 24px;
-      display: block;
-    }
-
-    form {
-      display: grid;
-      gap: 10px;
-    }
-
-    label {
-      display: grid;
-      gap: 6px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
+    form { display: grid; gap: 10px; }
+    label { display: grid; gap: 6px; color: var(--muted); font-size: 12px; font-weight: 700; }
     input, select {
       width: 100%;
-      border: 1px solid var(--borde);
-      border-radius: 6px;
-      padding: 10px;
-      font-size: 14px;
       min-height: 38px;
+      border: 1px solid var(--linea);
+      border-radius: 6px;
+      padding: 9px 10px;
       background: #fff;
       color: var(--texto);
     }
-
-    .fila {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
+    .fila { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .acciones { display: flex; gap: 10px; flex-wrap: wrap; }
     .estado {
-      padding: 10px 12px;
       border-radius: 6px;
-      background: #ecfdf5;
+      padding: 10px;
       border: 1px solid #a7f3d0;
+      background: #ecfdf5;
       color: #065f46;
       font-size: 13px;
       min-height: 38px;
     }
-
-    .estado.error {
-      background: #fef2f2;
-      border-color: #fecaca;
-      color: var(--rojo);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    th, td {
-      padding: 10px 8px;
-      border-bottom: 1px solid var(--borde);
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      color: var(--muted);
-      font-size: 12px;
-      background: #f8faf9;
-    }
-
-    .tabla-scroll {
-      overflow-x: auto;
-      max-height: 320px;
-      border: 1px solid var(--borde);
-      border-radius: 8px;
-    }
-
+    .estado.error { border-color: #fecaca; background: #fef2f2; color: var(--rojo); }
+    .nota { color: var(--muted); font-size: 13px; line-height: 1.45; margin: 0; }
+    .tabla-scroll { overflow: auto; border: 1px solid var(--linea); border-radius: 8px; max-height: 360px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 620px; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--linea); text-align: left; vertical-align: top; }
+    th { background: #f8faf9; color: var(--muted); font-size: 12px; }
     pre {
       margin: 0;
-      white-space: pre-wrap;
-      word-break: break-word;
+      border-radius: 8px;
+      padding: 12px;
       background: #10201d;
       color: #e7f5f1;
-      padding: 12px;
-      border-radius: 8px;
       min-height: 160px;
       max-height: 320px;
       overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
       font-size: 12px;
     }
 
     @media (max-width: 900px) {
-      .col-4, .col-6, .col-8 { grid-column: span 12; }
-      .metricas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .layout { grid-template-columns: 1fr; }
+      .menu { border-right: 0; border-bottom: 1px solid var(--linea); }
+      .menu button { display: none; }
+      .col-3, .col-4, .col-6, .col-8 { grid-column: span 12; }
     }
 
     @media (max-width: 560px) {
-      header { padding: 16px; }
-      main { width: calc(100% - 20px); }
-      .fila, .metricas { grid-template-columns: 1fr; }
-      h1 { font-size: 19px; }
+      .fila { grid-template-columns: 1fr; }
+      main { padding: 12px; }
+      .barra { padding: 12px; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Sistema de Gestion de Caja de Ahorros</h1>
-    <nav class="acciones-header">
-      <a class="boton secundario" href="/docs">Swagger</a>
-      <a class="boton secundario" href="/redoc">Redoc</a>
-      <a class="boton secundario" href="/salud">Salud</a>
-    </nav>
-  </header>
+  <section id="login-page" class="login-page">
+    <form id="form-login" class="login-card">
+      <h1>Sistema de Gestion de Caja de Ahorros</h1>
+      <p>Ingresa con un usuario de prueba para abrir el panel funcional.</p>
+      <label>Usuario
+        <input name="nombre_usuario" value="admin" autocomplete="username" required />
+      </label>
+      <label>Contrasena
+        <input name="contrasena" value="Admin123" type="password" autocomplete="current-password" required />
+      </label>
+      <button type="submit">Ingresar</button>
+      <div id="estado-login" class="estado">Usuarios: admin/Admin123 o socio/Socio123</div>
+    </form>
+  </section>
 
-  <main>
-    <section class="grid">
-      <div class="panel col-4">
-        <h2>Acceso</h2>
-        <form id="form-login">
-          <label>Usuario
-            <input name="nombre_usuario" value="admin" autocomplete="username" />
-          </label>
-          <label>Contrasena
-            <input name="contrasena" value="Admin123" type="password" autocomplete="current-password" />
-          </label>
-          <button type="submit">Ingresar</button>
-          <div id="estado-login" class="estado">Sesion pendiente</div>
-        </form>
+  <section id="app-shell" class="app-shell oculto">
+    <header class="barra">
+      <h1>Sistema de Gestion de Caja de Ahorros</h1>
+      <div class="usuario-box">
+        <span id="usuario-activo">Sin sesion</span>
+        <a href="/docs">Swagger</a>
+        <a href="/redoc">Redoc</a>
+        <button id="btn-salir" class="rojo" type="button">Salir</button>
       </div>
+    </header>
 
-      <div class="panel col-8">
-        <h2>Resumen</h2>
-        <div class="metricas">
-          <div class="metrica"><span>Socios</span><strong id="m-socios">0</strong></div>
-          <div class="metrica"><span>Cuentas</span><strong id="m-cuentas">0</strong></div>
-          <div class="metrica"><span>Transacciones</span><strong id="m-transacciones">0</strong></div>
-          <div class="metrica"><span>Creditos</span><strong id="m-creditos">0</strong></div>
-        </div>
-      </div>
-    </section>
+    <div class="layout">
+      <nav class="menu" aria-label="Menu principal">
+        <select id="menu-select" aria-label="Menu desplegable"></select>
+        <button type="button" data-vista="dashboard" class="activo">Panel general</button>
+        <button type="button" data-vista="socios">Socios</button>
+        <button type="button" data-vista="cuentas">Cuentas</button>
+        <button type="button" data-vista="transacciones">Transacciones</button>
+        <button type="button" data-vista="creditos">Creditos</button>
+        <button type="button" data-vista="reportes">Reportes</button>
+        <button type="button" data-vista="externa">API externa</button>
+      </nav>
 
-    <section class="grid">
-      <div class="panel col-6">
-        <h2>Nuevo socio</h2>
-        <form id="form-socio">
-          <div class="fila">
-            <label>Cedula <input name="cedula" required /></label>
-            <label>Telefono <input name="telefono" value="0990000000" required /></label>
+      <main>
+        <section id="vista-dashboard" class="vista grid">
+          <div class="panel col-12">
+            <h2>Panel general</h2>
+            <p id="mensaje-rol" class="nota"></p>
           </div>
-          <div class="fila">
-            <label>Nombres <input name="nombres" value="Cliente" required /></label>
-            <label>Apellidos <input name="apellidos" value="Demo" required /></label>
+          <div class="panel col-3 metrica"><span>Socios visibles</span><strong id="m-socios">0</strong></div>
+          <div class="panel col-3 metrica"><span>Cuentas visibles</span><strong id="m-cuentas">0</strong></div>
+          <div class="panel col-3 metrica"><span>Transacciones visibles</span><strong id="m-transacciones">0</strong></div>
+          <div class="panel col-3 metrica"><span>Creditos</span><strong id="m-creditos">0</strong></div>
+          <div class="panel col-6">
+            <h3>Cuentas</h3>
+            <div class="tabla-scroll"><table><thead><tr><th>Numero</th><th>Saldo</th><th>Estado</th><th>Socio</th></tr></thead><tbody id="tabla-dashboard-cuentas"></tbody></table></div>
           </div>
-          <div class="fila">
-            <label>Fecha nacimiento <input name="fecha_nacimiento" type="date" value="1998-01-15" required /></label>
-            <label>Correo <input name="correo" type="email" required /></label>
+          <div class="panel col-6">
+            <h3>Ultimos movimientos</h3>
+            <div class="tabla-scroll"><table><thead><tr><th>Tipo</th><th>Monto</th><th>Saldo</th><th>Cuenta</th></tr></thead><tbody id="tabla-dashboard-movimientos"></tbody></table></div>
           </div>
-          <label>Direccion <input name="direccion" value="Direccion de prueba" required /></label>
-          <button type="submit">Crear socio</button>
-        </form>
-      </div>
+        </section>
 
-      <div class="panel col-6">
-        <h2>Cuenta y movimiento</h2>
-        <form id="form-movimiento">
-          <div class="fila">
-            <label>Socio
-              <select name="socio_id" id="select-socio"></select>
-            </label>
-            <label>Cuenta
-              <select name="cuenta_id" id="select-cuenta"></select>
-            </label>
+        <section id="vista-socios" class="vista grid oculto">
+          <div class="panel col-4" data-admin-only>
+            <h2>Registrar socio</h2>
+            <form id="form-socio">
+              <div class="fila">
+                <label>Cedula <input name="cedula" required /></label>
+                <label>Telefono <input name="telefono" value="0990000000" required /></label>
+              </div>
+              <div class="fila">
+                <label>Nombres <input name="nombres" value="Cliente" required /></label>
+                <label>Apellidos <input name="apellidos" value="Demo" required /></label>
+              </div>
+              <label>Fecha nacimiento <input name="fecha_nacimiento" type="date" value="1998-01-15" required /></label>
+              <label>Correo <input name="correo" type="email" required /></label>
+              <label>Direccion <input name="direccion" value="Direccion de prueba" required /></label>
+              <button type="submit">Crear socio</button>
+            </form>
           </div>
-          <div class="fila">
-            <button class="azul" id="crear-cuenta" type="button">Crear cuenta</button>
-            <label>Monto <input name="monto" value="100.00" required /></label>
+          <div class="panel col-8">
+            <h2>Socios</h2>
+            <p class="nota" data-socio-only>Como cliente solo se muestra tu perfil asociado.</p>
+            <div class="tabla-scroll"><table><thead><tr><th>ID</th><th>Cedula</th><th>Nombre</th><th>Correo</th><th>Estado</th></tr></thead><tbody id="tabla-socios"></tbody></table></div>
           </div>
-          <div class="fila">
-            <button type="submit" data-tipo="deposito">Deposito</button>
-            <button class="ambar" type="submit" data-tipo="retiro">Retiro</button>
+        </section>
+
+        <section id="vista-cuentas" class="vista grid oculto">
+          <div class="panel col-4" data-admin-only>
+            <h2>Nueva cuenta</h2>
+            <form id="form-cuenta">
+              <label>Socio <select name="socio_id" id="select-socio-cuenta"></select></label>
+              <button type="submit">Crear cuenta</button>
+            </form>
           </div>
-        </form>
-      </div>
-    </section>
-
-    <section class="grid">
-      <div class="panel col-6">
-        <h2>API externa</h2>
-        <form id="form-externa">
-          <div class="fila">
-            <label>Cedula <input name="cedula" value="0102030405" required /></label>
-            <label>Cuenta <input name="numeroCuenta" value="CTA-000001" required /></label>
+          <div class="panel col-8">
+            <h2>Cuentas</h2>
+            <p class="nota" data-socio-only>Estas son solamente las cuentas asociadas a tu usuario.</p>
+            <div class="tabla-scroll"><table><thead><tr><th>ID</th><th>Numero</th><th>Saldo</th><th>Estado</th><th>Socio</th></tr></thead><tbody id="tabla-cuentas"></tbody></table></div>
           </div>
-          <label>API Key <input name="api_key" value="API-KEY-DEMO-123" required /></label>
-          <button type="submit">Consultar</button>
-        </form>
-      </div>
+        </section>
 
-      <div class="panel col-6">
-        <h2>Respuesta</h2>
-        <pre id="salida">Sin datos</pre>
-      </div>
-    </section>
+        <section id="vista-transacciones" class="vista grid oculto">
+          <div class="panel col-4" data-admin-only>
+            <h2>Deposito o retiro</h2>
+            <form id="form-movimiento">
+              <label>Cuenta <select name="cuenta_id" id="select-cuenta-mov"></select></label>
+              <label>Monto <input name="monto" value="100.00" inputmode="decimal" required /></label>
+              <div class="acciones">
+                <button type="submit" data-tipo="deposito">Deposito</button>
+                <button type="submit" data-tipo="retiro" class="ambar">Retiro</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel col-8">
+            <h2>Transacciones</h2>
+            <p class="nota" data-socio-only>Como cliente solo ves movimientos de tus cuentas.</p>
+            <div class="tabla-scroll"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Monto</th><th>Saldo</th><th>Cuenta</th></tr></thead><tbody id="tabla-transacciones"></tbody></table></div>
+          </div>
+        </section>
 
-    <section class="grid">
-      <div class="panel col-6">
-        <h2>Socios</h2>
-        <div class="tabla-scroll">
-          <table>
-            <thead><tr><th>ID</th><th>Cedula</th><th>Nombre</th><th>Estado</th></tr></thead>
-            <tbody id="tabla-socios"></tbody>
-          </table>
-        </div>
-      </div>
+        <section id="vista-creditos" class="vista grid oculto">
+          <div class="panel col-4" data-admin-only>
+            <h2>Solicitar credito</h2>
+            <form id="form-credito">
+              <label>Socio <select name="socio_id" id="select-socio-credito"></select></label>
+              <div class="fila">
+                <label>Monto <input name="monto_solicitado" value="1000.00" required /></label>
+                <label>Plazo meses <input name="plazo_meses" type="number" value="6" required /></label>
+              </div>
+              <label>Tasa interes <input name="tasa_interes" value="12.00" required /></label>
+              <label>Garantia <input name="tipo_garantia" value="Garante personal" required /></label>
+              <label>Proposito <input name="proposito" value="Capital de trabajo" required /></label>
+              <button type="submit">Solicitar</button>
+            </form>
+          </div>
+          <div class="panel col-8">
+            <h2>Creditos</h2>
+            <div class="tabla-scroll"><table><thead><tr><th>ID</th><th>Numero</th><th>Socio</th><th>Monto</th><th>Estado</th><th>Saldo</th></tr></thead><tbody id="tabla-creditos"></tbody></table></div>
+          </div>
+        </section>
 
-      <div class="panel col-6">
-        <h2>Transacciones</h2>
-        <div class="tabla-scroll">
-          <table>
-            <thead><tr><th>Tipo</th><th>Monto</th><th>Saldo</th><th>Cuenta</th></tr></thead>
-            <tbody id="tabla-transacciones"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  </main>
+        <section id="vista-reportes" class="vista grid oculto">
+          <div class="panel col-12">
+            <h2>Reportes</h2>
+            <div class="acciones">
+              <button type="button" data-reporte="/api/v1/reportes/libro-diario">Libro diario</button>
+              <button type="button" data-reporte="/api/v1/reportes/cartera-creditos">Cartera creditos</button>
+            </div>
+          </div>
+          <div class="panel col-12"><pre id="salida-reportes">Selecciona un reporte</pre></div>
+        </section>
+
+        <section id="vista-externa" class="vista grid oculto">
+          <div class="panel col-4">
+            <h2>API externa</h2>
+            <form id="form-externa">
+              <label>Cedula <input name="cedula" value="0102030405" required /></label>
+              <label>Numero cuenta <input name="numeroCuenta" value="CTA-000001" required /></label>
+              <label>API Key <input name="api_key" value="API-KEY-DEMO-123" required /></label>
+              <button type="submit">Consultar</button>
+            </form>
+          </div>
+          <div class="panel col-8"><pre id="salida-externa">Sin consulta</pre></div>
+        </section>
+
+        <div id="estado-global" class="estado">Esperando accion</div>
+      </main>
+    </div>
+  </section>
 
   <script>
-    const salida = document.querySelector("#salida");
     const estadoLogin = document.querySelector("#estado-login");
+    const estadoGlobal = document.querySelector("#estado-global");
+    const vistas = document.querySelectorAll(".vista");
+    const menuSelect = document.querySelector("#menu-select");
+    const botonesMenu = document.querySelectorAll(".menu button[data-vista]");
     let token = "";
+    let usuario = null;
+    let socioActual = null;
     let socios = [];
     let cuentas = [];
+    let transacciones = [];
+    let creditos = [];
 
-    function mostrar(data) {
-      salida.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
-    }
-
-    function errorEstado(elemento, mensaje) {
-      elemento.textContent = mensaje;
-      elemento.classList.add("error");
-    }
-
-    function okEstado(elemento, mensaje) {
+    function ok(elemento, mensaje) {
       elemento.textContent = mensaje;
       elemento.classList.remove("error");
     }
 
+    function error(elemento, mensaje) {
+      elemento.textContent = mensaje;
+      elemento.classList.add("error");
+    }
+
+    function mostrarJson(selector, data) {
+      document.querySelector(selector).textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
+    }
+
+    function dinero(valor) {
+      return Number(valor || 0).toFixed(2);
+    }
+
+    function validarMonto(valor) {
+      const numero = Number(valor);
+      return Number.isFinite(numero) && numero > 0;
+    }
+
     async function api(ruta, opciones = {}) {
-      const headers = opciones.headers || {};
+      const headers = opciones.headers ? { ...opciones.headers } : {};
       if (token) headers.Authorization = `Bearer ${token}`;
       if (opciones.body && !headers["Content-Type"]) headers["Content-Type"] = "application/json";
       const respuesta = await fetch(ruta, { ...opciones, headers });
@@ -392,109 +401,236 @@ Version: 1.0
       return data;
     }
 
-    function llenarSelects() {
-      const selectSocio = document.querySelector("#select-socio");
-      const selectCuenta = document.querySelector("#select-cuenta");
-      selectSocio.innerHTML = socios.map(s => `<option value="${s.id}">${s.id} - ${s.nombres} ${s.apellidos}</option>`).join("");
-      selectCuenta.innerHTML = cuentas.map(c => `<option value="${c.id}">${c.numero_cuenta} - ${c.saldo}</option>`).join("");
+    function esSocio() {
+      return usuario && usuario.rol === "SOCIO";
     }
 
-    function renderSocios() {
-      document.querySelector("#tabla-socios").innerHTML = socios.map(s => `
-        <tr><td>${s.id}</td><td>${s.cedula}</td><td>${s.nombres} ${s.apellidos}</td><td>${s.estado}</td></tr>
-      `).join("");
+    function configurarMenu() {
+      const opciones = [
+        ["dashboard", "Panel general"],
+        ["socios", "Socios"],
+        ["cuentas", "Cuentas"],
+        ["transacciones", "Transacciones"],
+        ["creditos", "Creditos"],
+        ["reportes", "Reportes"],
+        ["externa", "API externa"]
+      ];
+      menuSelect.innerHTML = opciones.map(([valor, texto]) => `<option value="${valor}">${texto}</option>`).join("");
+      document.querySelectorAll("[data-admin-only]").forEach(el => el.classList.toggle("oculto", esSocio()));
+      document.querySelectorAll("[data-socio-only]").forEach(el => el.classList.toggle("oculto", !esSocio()));
+      document.querySelector("#mensaje-rol").textContent = esSocio()
+        ? "Ingresaste como cliente. El sistema filtra tus datos para mostrar solo tus cuentas y movimientos asociados."
+        : "Ingresaste como personal interno. Puedes consultar y registrar informacion operativa del sistema.";
     }
 
-    async function cargarTodo() {
-      try {
-        socios = await api("/api/v1/socios");
-        cuentas = await api("/api/v1/cuentas");
-        const transacciones = await api("/api/v1/transacciones");
-        const creditos = await api("/api/v1/creditos");
+    function cambiarVista(nombre) {
+      vistas.forEach(vista => vista.classList.add("oculto"));
+      document.querySelector(`#vista-${nombre}`).classList.remove("oculto");
+      botonesMenu.forEach(boton => boton.classList.toggle("activo", boton.dataset.vista === nombre));
+      menuSelect.value = nombre;
+    }
 
-        document.querySelector("#m-socios").textContent = socios.length;
-        document.querySelector("#m-cuentas").textContent = cuentas.length;
-        document.querySelector("#m-transacciones").textContent = transacciones.length;
-        document.querySelector("#m-creditos").textContent = creditos.length;
+    function llenarSelect(selector, lista, texto) {
+      const select = document.querySelector(selector);
+      select.innerHTML = lista.map(item => `<option value="${item.id}">${texto(item)}</option>`).join("");
+    }
 
-        renderSocios();
-        llenarSelects();
-        document.querySelector("#tabla-transacciones").innerHTML = transacciones.slice(0, 20).map(t => `
-          <tr><td>${t.tipo_transaccion}</td><td>${t.monto}</td><td>${t.saldo_resultante}</td><td>${t.cuenta_id}</td></tr>
-        `).join("");
-      } catch (error) {
-        mostrar(error);
+    function pintarTabla(selector, filas, columnas) {
+      document.querySelector(selector).innerHTML = filas.map(fila => `<tr>${columnas.map(col => `<td>${col(fila)}</td>`).join("")}</tr>`).join("");
+    }
+
+    async function cargarDatos() {
+      const rutas = esSocio()
+        ? ["/api/v1/socios/perfil/me", "/api/v1/cuentas/mis-cuentas", "/api/v1/transacciones/mis-transacciones", "/api/v1/creditos/mis-creditos"]
+        : ["/api/v1/socios", "/api/v1/cuentas/mis-cuentas", "/api/v1/transacciones/mis-transacciones", "/api/v1/creditos/mis-creditos"];
+      const [datosSocios, datosCuentas, datosTransacciones, datosCreditos] = await Promise.all(rutas.map(ruta => api(ruta)));
+      socios = Array.isArray(datosSocios) ? datosSocios : [datosSocios];
+      socioActual = esSocio() ? datosSocios : null;
+      cuentas = datosCuentas;
+      transacciones = datosTransacciones;
+      creditos = datosCreditos;
+      renderizar();
+    }
+
+    function renderizar() {
+      document.querySelector("#m-socios").textContent = socios.length;
+      document.querySelector("#m-cuentas").textContent = cuentas.length;
+      document.querySelector("#m-transacciones").textContent = transacciones.length;
+      document.querySelector("#m-creditos").textContent = creditos.length;
+
+      pintarTabla("#tabla-dashboard-cuentas", cuentas, [
+        c => c.numero_cuenta,
+        c => dinero(c.saldo),
+        c => c.estado,
+        c => c.socio_id
+      ]);
+      pintarTabla("#tabla-dashboard-movimientos", transacciones.slice(0, 10), [
+        t => t.tipo_transaccion,
+        t => dinero(t.monto),
+        t => dinero(t.saldo_resultante),
+        t => t.cuenta_id
+      ]);
+      pintarTabla("#tabla-socios", socios, [
+        s => s.id,
+        s => s.cedula,
+        s => `${s.nombres} ${s.apellidos}`,
+        s => s.correo,
+        s => s.estado
+      ]);
+      pintarTabla("#tabla-cuentas", cuentas, [
+        c => c.id,
+        c => c.numero_cuenta,
+        c => dinero(c.saldo),
+        c => c.estado,
+        c => c.socio_id
+      ]);
+      pintarTabla("#tabla-transacciones", transacciones, [
+        t => new Date(t.fecha).toLocaleDateString(),
+        t => t.tipo_transaccion,
+        t => dinero(t.monto),
+        t => dinero(t.saldo_resultante),
+        t => t.cuenta_id
+      ]);
+      pintarTabla("#tabla-creditos", creditos, [
+        c => c.id,
+        c => c.numero_credito,
+        c => c.socio_id,
+        c => dinero(c.monto_solicitado),
+        c => c.estado,
+        c => dinero(c.saldo_pendiente)
+      ]);
+
+      llenarSelect("#select-socio-cuenta", socios, s => `${s.id} - ${s.nombres} ${s.apellidos}`);
+      llenarSelect("#select-socio-credito", socios, s => `${s.id} - ${s.nombres} ${s.apellidos}`);
+      llenarSelect("#select-cuenta-mov", cuentas, c => `${c.numero_cuenta} - ${dinero(c.saldo)}`);
+
+      if (socioActual && cuentas[0]) {
+        document.querySelector("#form-externa [name='cedula']").value = socioActual.cedula;
+        document.querySelector("#form-externa [name='numeroCuenta']").value = cuentas[0].numero_cuenta;
       }
     }
 
-    document.querySelector("#form-login").addEventListener("submit", async (evento) => {
+    document.querySelector("#form-login").addEventListener("submit", async evento => {
       evento.preventDefault();
       const datos = Object.fromEntries(new FormData(evento.currentTarget));
       try {
         const respuesta = await api("/api/v1/auth/login", { method: "POST", body: JSON.stringify(datos) });
         token = respuesta.access_token;
-        okEstado(estadoLogin, `Sesion: ${respuesta.usuario.nombre_usuario}`);
-        mostrar(respuesta);
-        await cargarTodo();
-      } catch (error) {
-        errorEstado(estadoLogin, "Credenciales invalidas");
-        mostrar(error);
+        usuario = respuesta.usuario;
+        document.querySelector("#usuario-activo").textContent = `${usuario.nombre_usuario} - ${usuario.rol}`;
+        document.querySelector("#login-page").classList.add("oculto");
+        document.querySelector("#app-shell").classList.remove("oculto");
+        configurarMenu();
+        await cargarDatos();
+        cambiarVista("dashboard");
+        ok(estadoGlobal, "Datos cargados desde la base de datos");
+      } catch (err) {
+        error(estadoLogin, err.detail || "No se pudo iniciar sesion");
       }
     });
 
-    document.querySelector("#form-socio").addEventListener("submit", async (evento) => {
+    document.querySelector("#btn-salir").addEventListener("click", () => {
+      token = "";
+      usuario = null;
+      document.querySelector("#app-shell").classList.add("oculto");
+      document.querySelector("#login-page").classList.remove("oculto");
+      ok(estadoLogin, "Sesion cerrada");
+    });
+
+    botonesMenu.forEach(boton => boton.addEventListener("click", () => cambiarVista(boton.dataset.vista)));
+    menuSelect.addEventListener("change", evento => cambiarVista(evento.target.value));
+
+    document.querySelector("#form-socio").addEventListener("submit", async evento => {
       evento.preventDefault();
       const datos = Object.fromEntries(new FormData(evento.currentTarget));
       try {
-        const socio = await api("/api/v1/socios", { method: "POST", body: JSON.stringify(datos) });
-        mostrar(socio);
-        await cargarTodo();
-      } catch (error) {
-        mostrar(error);
+        if (!/^\d{5,20}$/.test(datos.cedula)) throw new Error("La cedula debe tener entre 5 y 20 digitos");
+        await api("/api/v1/socios", { method: "POST", body: JSON.stringify(datos) });
+        await cargarDatos();
+        ok(estadoGlobal, "Socio creado correctamente");
+      } catch (err) {
+        error(estadoGlobal, err.detail || err.message || "No se pudo crear el socio");
       }
     });
 
-    document.querySelector("#crear-cuenta").addEventListener("click", async () => {
-      const socio_id = Number(document.querySelector("#select-socio").value);
-      if (!socio_id) return mostrar("No hay socio seleccionado");
-      try {
-        const cuenta = await api("/api/v1/cuentas", { method: "POST", body: JSON.stringify({ socio_id }) });
-        mostrar(cuenta);
-        await cargarTodo();
-      } catch (error) {
-        mostrar(error);
-      }
-    });
-
-    document.querySelector("#form-movimiento").addEventListener("submit", async (evento) => {
+    document.querySelector("#form-cuenta").addEventListener("submit", async evento => {
       evento.preventDefault();
-      const boton = evento.submitter;
       const datos = Object.fromEntries(new FormData(evento.currentTarget));
-      const payload = { cuenta_id: Number(datos.cuenta_id), monto: datos.monto, descripcion: "Movimiento desde pagina local" };
       try {
-        const movimiento = await api(`/api/v1/transacciones/${boton.dataset.tipo}`, { method: "POST", body: JSON.stringify(payload) });
-        mostrar(movimiento);
-        await cargarTodo();
-      } catch (error) {
-        mostrar(error);
+        await api("/api/v1/cuentas", { method: "POST", body: JSON.stringify({ socio_id: Number(datos.socio_id) }) });
+        await cargarDatos();
+        ok(estadoGlobal, "Cuenta creada correctamente");
+      } catch (err) {
+        error(estadoGlobal, err.detail || "No se pudo crear la cuenta");
       }
     });
 
-    document.querySelector("#form-externa").addEventListener("submit", async (evento) => {
+    document.querySelector("#form-movimiento").addEventListener("submit", async evento => {
+      evento.preventDefault();
+      const datos = Object.fromEntries(new FormData(evento.currentTarget));
+      const tipo = evento.submitter.dataset.tipo;
+      try {
+        if (!datos.cuenta_id) throw new Error("Selecciona una cuenta");
+        if (!validarMonto(datos.monto)) throw new Error("El monto debe ser mayor a cero");
+        await api(`/api/v1/transacciones/${tipo}`, {
+          method: "POST",
+          body: JSON.stringify({ cuenta_id: Number(datos.cuenta_id), monto: datos.monto, descripcion: "Movimiento desde interfaz web" })
+        });
+        await cargarDatos();
+        ok(estadoGlobal, "Movimiento registrado correctamente");
+      } catch (err) {
+        error(estadoGlobal, err.detail || err.message || "No se pudo registrar el movimiento");
+      }
+    });
+
+    document.querySelector("#form-credito").addEventListener("submit", async evento => {
+      evento.preventDefault();
+      const datos = Object.fromEntries(new FormData(evento.currentTarget));
+      try {
+        if (!validarMonto(datos.monto_solicitado)) throw new Error("El monto debe ser mayor a cero");
+        await api("/api/v1/creditos/solicitar", {
+          method: "POST",
+          body: JSON.stringify({
+            socio_id: Number(datos.socio_id),
+            monto_solicitado: datos.monto_solicitado,
+            plazo_meses: Number(datos.plazo_meses),
+            tasa_interes: datos.tasa_interes,
+            tipo_garantia: datos.tipo_garantia,
+            proposito: datos.proposito
+          })
+        });
+        await cargarDatos();
+        ok(estadoGlobal, "Credito solicitado correctamente");
+      } catch (err) {
+        error(estadoGlobal, err.detail || err.message || "No se pudo solicitar el credito");
+      }
+    });
+
+    document.querySelectorAll("[data-reporte]").forEach(boton => {
+      boton.addEventListener("click", async () => {
+        try {
+          const data = await api(boton.dataset.reporte);
+          mostrarJson("#salida-reportes", data);
+          ok(estadoGlobal, "Reporte cargado desde la base de datos");
+        } catch (err) {
+          mostrarJson("#salida-reportes", err);
+        }
+      });
+    });
+
+    document.querySelector("#form-externa").addEventListener("submit", async evento => {
       evento.preventDefault();
       const datos = Object.fromEntries(new FormData(evento.currentTarget));
       const params = new URLSearchParams({ cedula: datos.cedula, numeroCuenta: datos.numeroCuenta });
       try {
-        const respuesta = await api(`/api/v1/cuenta/movimientos?${params.toString()}`, {
-          headers: { "X-API-KEY": datos.api_key }
-        });
-        mostrar(respuesta);
-      } catch (error) {
-        mostrar(error);
+        const data = await api(`/api/v1/cuenta/movimientos?${params.toString()}`, { headers: { "X-API-KEY": datos.api_key } });
+        mostrarJson("#salida-externa", data);
+        ok(estadoGlobal, "Consulta externa realizada correctamente");
+      } catch (err) {
+        mostrarJson("#salida-externa", err);
+        error(estadoGlobal, err.detail || "No se pudo consultar la API externa");
       }
     });
-
-    cargarTodo();
   </script>
 </body>
 </html>

@@ -24,6 +24,8 @@ class SocioServicio:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ya existe un socio con esa cedula")
         if datos.usuario_registro_id and not usuario_repositorio.obtener(db, datos.usuario_registro_id):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario registrador no encontrado")
+        if datos.usuario_id and not usuario_repositorio.obtener(db, datos.usuario_id):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario socio no encontrado")
         socio = Socio(
             numero_socio=generar_codigo_secuencial(db, Socio, "numero_socio", "SOC"),
             cedula=datos.cedula,
@@ -34,6 +36,7 @@ class SocioServicio:
             telefono=datos.telefono,
             correo=str(datos.correo),
             usuario_registro_id=datos.usuario_registro_id,
+            usuario_id=datos.usuario_id,
         )
         return socio_repositorio.guardar(db, socio)
 
@@ -60,6 +63,14 @@ class SocioServicio:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Socio no encontrado")
         return socio
 
+    def obtener_por_usuario(self, db: Session, usuario_id: int):
+        """Obtiene el socio vinculado al usuario autenticado."""
+
+        socio = socio_repositorio.obtener_por_usuario(db, usuario_id)
+        if not socio:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El usuario no tiene socio asociado")
+        return socio
+
     def actualizar(self, db: Session, socio_id: int, datos: SocioActualizar):
         """Actualiza datos personales del socio."""
 
@@ -84,4 +95,3 @@ class SocioServicio:
 
 
 socio_servicio = SocioServicio()
-

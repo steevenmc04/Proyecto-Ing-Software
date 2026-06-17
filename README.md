@@ -154,6 +154,15 @@ Abrir en el navegador:
 - Redoc: http://127.0.0.1:8000/redoc
 - Salud API: http://127.0.0.1:8000/salud
 
+La pagina funcional inicia con login. Despues muestra un menu desplegable con panel general, socios, cuentas, transacciones, creditos, reportes y API externa.
+
+Usuarios recomendados para probar:
+
+- Personal interno: `admin` / `Admin123`
+- Cliente socio: `socio` / `Socio123`
+
+Si ingresas como `admin`, se muestran formularios operativos para administrar el sistema. Si ingresas como `socio`, el sistema filtra los datos y solo muestra el perfil, cuentas y movimientos asociados a ese cliente.
+
 ### Opcion con MySQL Workbench
 
 ```powershell
@@ -202,6 +211,7 @@ Datos creados:
 - Gerente: `gerente` / `Gerente123`
 - Cajero: `cajero` / `Cajero123`
 - Contador: `contador` / `Contador123`
+- Cliente socio: `socio` / `Socio123`
 - Socio de prueba con cedula `0102030405`
 - Cuenta de ahorro activa
 - Tres depositos y un retiro

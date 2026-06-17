@@ -38,8 +38,8 @@ class Usuario(Base):
     fecha_creacion = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     socios_registrados = relationship("Socio", foreign_keys="Socio.usuario_registro_id", back_populates="usuario_registro")
+    socio_perfil = relationship("Socio", foreign_keys="Socio.usuario_id", back_populates="usuario", uselist=False)
     transacciones_cajero = relationship("Transaccion", foreign_keys="Transaccion.usuario_cajero_id", back_populates="usuario_cajero")
     aportaciones_cajero = relationship("Aportacion", foreign_keys="Aportacion.usuario_cajero_id", back_populates="usuario_cajero")
     creditos_aprobados = relationship("Credito", foreign_keys="Credito.gerente_aprobador_id", back_populates="gerente_aprobador")
     creditos_desembolsados = relationship("Credito", foreign_keys="Credito.cajero_desembolso_id", back_populates="cajero_desembolso")
-

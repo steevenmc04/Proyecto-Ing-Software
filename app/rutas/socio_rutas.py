@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.controladores import socio_controlador
 from app.database import obtener_db
+from app.dependencias import obtener_usuario_actual
 from app.esquemas.socio_esquema import SocioActualizar, SocioCrear, SocioRespuesta
 
 
@@ -34,6 +35,13 @@ def obtener_por_cedula(cedula: str, db: Session = Depends(obtener_db)):
     """Busca un socio por cedula."""
 
     return socio_controlador.obtener_por_cedula(db, cedula)
+
+
+@router.get("/perfil/me", response_model=SocioRespuesta, summary="Obtener socio del usuario autenticado")
+def obtener_mi_socio(db: Session = Depends(obtener_db), usuario=Depends(obtener_usuario_actual)):
+    """Devuelve el socio vinculado al usuario autenticado."""
+
+    return socio_controlador.obtener_por_usuario(db, usuario.id)
 
 
 @router.get("/{id}", response_model=SocioRespuesta, summary="Obtener socio por ID")
@@ -62,4 +70,3 @@ def desactivar(id: int, db: Session = Depends(obtener_db)):
     """Marca el socio como INACTIVO."""
 
     return socio_controlador.desactivar(db, id)
-

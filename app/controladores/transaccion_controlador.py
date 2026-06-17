@@ -34,8 +34,13 @@ def listar_por_cuenta(db: Session, cuenta_id: int):
     return transaccion_servicio.listar_por_cuenta(db, cuenta_id)
 
 
+def listar_para_usuario(db: Session, usuario):
+    """Lista transacciones permitidas para el usuario autenticado."""
+
+    return transaccion_servicio.listar_para_usuario(db, usuario)
+
+
 def obtener(db: Session, id: int):
     """Obtiene transaccion."""
 
     return transaccion_servicio.obtener(db, id)
-

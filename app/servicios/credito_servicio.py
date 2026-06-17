@@ -14,6 +14,7 @@ from app.esquemas.credito_esquema import CreditoAprobar, CreditoDesembolsar, Cre
 from app.modelos.asiento_contable_modelo import TipoOrigenAsiento
 from app.modelos.credito_modelo import Credito, EstadoCredito
 from app.modelos.cuota_amortizacion_modelo import EstadoCuota
+from app.modelos.usuario_modelo import RolUsuario
 from app.repositorios.credito_repositorio import credito_repositorio
 from app.repositorios.cuota_amortizacion_repositorio import cuota_amortizacion_repositorio
 from app.repositorios.socio_repositorio import socio_repositorio
@@ -47,6 +48,16 @@ class CreditoServicio:
         """Lista creditos."""
 
         return credito_repositorio.listar(db, skip, limit)
+
+    def listar_para_usuario(self, db: Session, usuario):
+        """Lista creditos segun rol; un socio solo ve sus creditos."""
+
+        if usuario.rol == RolUsuario.SOCIO:
+            socio = socio_repositorio.obtener_por_usuario(db, usuario.id)
+            if not socio:
+                return []
+            return credito_repositorio.listar_por_socio(db, socio.id)
+        return credito_repositorio.listar(db, 0, 1000)
 
     def obtener(self, db: Session, credito_id: int):
         """Obtiene credito por ID."""
@@ -163,4 +174,3 @@ class CreditoServicio:
 
 
 credito_servicio = CreditoServicio()
-

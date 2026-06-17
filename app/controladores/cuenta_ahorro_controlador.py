@@ -34,6 +34,12 @@ def listar_por_socio(db: Session, socio_id: int):
     return cuenta_ahorro_servicio.listar_por_socio(db, socio_id)
 
 
+def listar_para_usuario(db: Session, usuario):
+    """Lista cuentas permitidas para el usuario autenticado."""
+
+    return cuenta_ahorro_servicio.listar_para_usuario(db, usuario)
+
+
 def obtener_por_numero(db: Session, numero_cuenta: str):
     """Obtiene cuenta por numero."""
 
@@ -62,4 +68,3 @@ def movimientos_externos(db: Session, cedula: str, numero_cuenta: str, api_key: 
     """Consulta API externa."""
 
     return cuenta_ahorro_servicio.consultar_api_externa(db, cedula, numero_cuenta, api_key)
-

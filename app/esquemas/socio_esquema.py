@@ -28,6 +28,7 @@ class SocioCrear(SocioBase):
     """Datos necesarios para registrar un socio."""
 
     usuario_registro_id: int | None = None
+    usuario_id: int | None = None
 
 
 class SocioActualizar(BaseModel):
@@ -50,6 +51,6 @@ class SocioRespuesta(SocioBase):
     total_aportaciones: Decimal
     fecha_registro: datetime
     usuario_registro_id: int | None = None
+    usuario_id: int | None = None
 
     model_config = ConfigDict(from_attributes=True)
-

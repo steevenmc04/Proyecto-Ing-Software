@@ -38,9 +38,10 @@ class Socio(Base):
     total_aportaciones = Column(Numeric(12, 2), default=0, nullable=False)
     fecha_registro = Column(DateTime, default=datetime.utcnow, nullable=False)
     usuario_registro_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), unique=True, nullable=True)
 
     usuario_registro = relationship("Usuario", foreign_keys=[usuario_registro_id], back_populates="socios_registrados")
+    usuario = relationship("Usuario", foreign_keys=[usuario_id], back_populates="socio_perfil")
     cuentas = relationship("CuentaAhorro", back_populates="socio", cascade="all, delete-orphan")
     aportaciones = relationship("Aportacion", back_populates="socio", cascade="all, delete-orphan")
     creditos = relationship("Credito", back_populates="socio", cascade="all, delete-orphan")
-

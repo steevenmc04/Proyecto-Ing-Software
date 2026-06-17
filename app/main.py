@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import obtener_configuracion
-from app.database import Base, engine
+from app.database import Base, aplicar_migraciones_ligeras, engine
 from app.modelos import *  # noqa: F401,F403 - registra modelos antes de crear tablas
 from app.rutas import (
     api_externa_rutas,
@@ -29,6 +29,7 @@ from app.rutas import (
 configuracion = obtener_configuracion()
 
 Base.metadata.create_all(bind=engine)
+aplicar_migraciones_ligeras()
 
 app = FastAPI(
     title=configuracion.nombre_app,

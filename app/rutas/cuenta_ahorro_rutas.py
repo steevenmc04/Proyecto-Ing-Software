@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.controladores import cuenta_ahorro_controlador
 from app.database import obtener_db
+from app.dependencias import obtener_usuario_actual
 from app.esquemas.cuenta_ahorro_esquema import CuentaAhorroCrear, CuentaAhorroRespuesta
 
 
@@ -27,6 +28,13 @@ def listar(skip: int = 0, limit: int = 100, db: Session = Depends(obtener_db)):
     """Lista cuentas de ahorro existentes."""
 
     return cuenta_ahorro_controlador.listar(db, skip, limit)
+
+
+@router.get("/mis-cuentas", response_model=list[CuentaAhorroRespuesta], summary="Listar cuentas permitidas")
+def mis_cuentas(db: Session = Depends(obtener_db), usuario=Depends(obtener_usuario_actual)):
+    """Lista todas las cuentas para personal interno y solo las propias para socios."""
+
+    return cuenta_ahorro_controlador.listar_para_usuario(db, usuario)
 
 
 @router.get("/socio/{socio_id}", response_model=list[CuentaAhorroRespuesta], summary="Listar cuentas por socio")
@@ -69,4 +77,3 @@ def cerrar(id: int, db: Session = Depends(obtener_db)):
     """Cierra la cuenta e impide nuevas operaciones."""
 
     return cuenta_ahorro_controlador.cerrar(db, id)
-

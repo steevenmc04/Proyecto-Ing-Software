@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.config import obtener_configuracion
 from app.esquemas.cuenta_ahorro_esquema import CuentaMovimientosExternoRespuesta, MovimientoExternoRespuesta
 from app.modelos.cuenta_ahorro_modelo import CuentaAhorro, EstadoCuenta
+from app.modelos.usuario_modelo import RolUsuario
 from app.repositorios.cuenta_ahorro_repositorio import cuenta_ahorro_repositorio
 from app.repositorios.socio_repositorio import socio_repositorio
 from app.repositorios.transaccion_repositorio import transaccion_repositorio
@@ -36,6 +37,16 @@ class CuentaAhorroServicio:
         """Lista cuentas."""
 
         return cuenta_ahorro_repositorio.listar(db, skip, limit)
+
+    def listar_para_usuario(self, db: Session, usuario):
+        """Devuelve cuentas segun rol: el socio solo ve las asociadas a su perfil."""
+
+        if usuario.rol == RolUsuario.SOCIO:
+            socio = socio_repositorio.obtener_por_usuario(db, usuario.id)
+            if not socio:
+                return []
+            return cuenta_ahorro_repositorio.listar_por_socio(db, socio.id)
+        return cuenta_ahorro_repositorio.listar(db, 0, 1000)
 
     def obtener(self, db: Session, cuenta_id: int):
         """Obtiene cuenta por ID."""
@@ -94,4 +105,3 @@ class CuentaAhorroServicio:
 
 
 cuenta_ahorro_servicio = CuentaAhorroServicio()
-

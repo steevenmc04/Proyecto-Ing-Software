@@ -5,7 +5,10 @@ Version: 1.0
 """
 
 import pytest
+import os
 from fastapi.testclient import TestClient
+
+os.environ["DATABASE_URL"] = "sqlite:///./test_caja_ahorros.db"
 
 from app.database import Base, engine
 from app.main import app
@@ -49,4 +52,3 @@ def crear_cuenta_prueba(cliente: TestClient, socio_id: int):
     respuesta = cliente.post("/api/v1/cuentas", json={"socio_id": socio_id})
     assert respuesta.status_code == 200
     return respuesta.json()
-

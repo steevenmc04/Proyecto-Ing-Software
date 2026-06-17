@@ -34,6 +34,12 @@ def listar_por_socio(db: Session, socio_id: int):
     return credito_servicio.listar_por_socio(db, socio_id)
 
 
+def listar_para_usuario(db: Session, usuario):
+    """Lista creditos permitidos para el usuario autenticado."""
+
+    return credito_servicio.listar_para_usuario(db, usuario)
+
+
 def aprobar(db: Session, id: int, datos: CreditoAprobar):
     """Aprueba credito."""
 
@@ -68,4 +74,3 @@ def obtener_cuota(db: Session, id: int):
     """Obtiene cuota."""
 
     return credito_servicio.obtener_cuota(db, id)
-

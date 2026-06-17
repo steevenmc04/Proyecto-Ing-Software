@@ -13,7 +13,9 @@ from app.esquemas.transaccion_esquema import TransaccionCrear
 from app.modelos.asiento_contable_modelo import TipoOrigenAsiento
 from app.modelos.cuenta_ahorro_modelo import EstadoCuenta
 from app.modelos.transaccion_modelo import TipoTransaccion, Transaccion
+from app.modelos.usuario_modelo import RolUsuario
 from app.repositorios.cuenta_ahorro_repositorio import cuenta_ahorro_repositorio
+from app.repositorios.socio_repositorio import socio_repositorio
 from app.repositorios.transaccion_repositorio import transaccion_repositorio
 from app.repositorios.usuario_repositorio import usuario_repositorio
 from app.servicios.asiento_contable_servicio import asiento_contable_servicio
@@ -101,6 +103,20 @@ class TransaccionServicio:
 
         return transaccion_repositorio.listar(db, skip, limit)
 
+    def listar_para_usuario(self, db: Session, usuario):
+        """Lista transacciones segun rol; un socio solo ve movimientos de sus cuentas."""
+
+        if usuario.rol == RolUsuario.SOCIO:
+            socio = socio_repositorio.obtener_por_usuario(db, usuario.id)
+            if not socio:
+                return []
+            movimientos = []
+            for cuenta in cuenta_ahorro_repositorio.listar_por_socio(db, socio.id):
+                movimientos.extend(transaccion_repositorio.listar_por_cuenta(db, cuenta.id))
+            movimientos.sort(key=lambda movimiento: movimiento.fecha, reverse=True)
+            return movimientos
+        return transaccion_repositorio.listar(db, 0, 1000)
+
     def obtener(self, db: Session, transaccion_id: int):
         """Obtiene una transaccion por ID."""
 
@@ -118,4 +134,3 @@ class TransaccionServicio:
 
 
 transaccion_servicio = TransaccionServicio()
-

@@ -22,6 +22,11 @@ class SocioRepositorio(RepositorioBase):
 
         return db.query(Socio).filter(Socio.cedula == cedula).first()
 
+    def obtener_por_usuario(self, db: Session, usuario_id: int):
+        """Busca el socio asociado a un usuario de rol SOCIO."""
+
+        return db.query(Socio).filter(Socio.usuario_id == usuario_id).first()
+
     def buscar(self, db: Session, termino: str):
         """Busca socios por cedula, nombres o apellidos."""
 
@@ -30,4 +35,3 @@ class SocioRepositorio(RepositorioBase):
 
 
 socio_repositorio = SocioRepositorio()
-

@@ -34,6 +34,12 @@ def obtener_por_cedula(db: Session, cedula: str):
     return socio_servicio.obtener_por_cedula(db, cedula)
 
 
+def obtener_por_usuario(db: Session, usuario_id: int):
+    """Obtiene socio vinculado a un usuario."""
+
+    return socio_servicio.obtener_por_usuario(db, usuario_id)
+
+
 def actualizar(db: Session, id: int, datos: SocioActualizar):
     """Actualiza socio."""
 
@@ -50,4 +56,3 @@ def desactivar(db: Session, id: int):
     """Desactiva socio."""
 
     return socio_servicio.cambiar_estado(db, id, False)
-

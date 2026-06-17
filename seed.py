@@ -7,7 +7,7 @@ Version: 1.0
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
-from app.database import Base, SesionLocal, engine
+from app.database import Base, SesionLocal, aplicar_migraciones_ligeras, engine
 from app.esquemas.aportacion_esquema import AportacionCrear, TipoAportacionCrear
 from app.esquemas.credito_esquema import CreditoAprobar, CreditoSolicitar
 from app.esquemas.socio_esquema import SocioCrear
@@ -50,6 +50,7 @@ def main():
     """Carga usuarios, socio, cuenta, movimientos, aportacion, creditos y asientos."""
 
     Base.metadata.create_all(bind=engine)
+    aplicar_migraciones_ligeras()
     db = SesionLocal()
     try:
         admin = crear_usuario_si_no_existe(
@@ -92,6 +93,16 @@ def main():
                 contrasena="Contador123",
             ),
         )
+        usuario_socio = crear_usuario_si_no_existe(
+            db,
+            UsuarioCrear(
+                nombre_usuario="socio",
+                nombre_completo="Juan Carlos Perez Mora",
+                correo="socio@caja.com",
+                rol=RolUsuario.SOCIO,
+                contrasena="Socio123",
+            ),
+        )
 
         socio = socio_repositorio.obtener_por_cedula(db, "0102030405")
         if not socio:
@@ -106,8 +117,13 @@ def main():
                     telefono="0999999999",
                     correo="juan.perez@caja.com",
                     usuario_registro_id=admin.id,
+                    usuario_id=usuario_socio.id,
                 ),
             )
+        elif not socio.usuario_id:
+            socio.usuario_id = usuario_socio.id
+            db.commit()
+            db.refresh(socio)
 
         cuentas = cuenta_ahorro_repositorio.listar_por_socio(db, socio.id)
         cuenta = cuentas[0] if cuentas else cuenta_ahorro_servicio.crear(db, socio.id)
@@ -158,7 +174,7 @@ def main():
             credito_servicio.aprobar(db, credito_aprobado.id, CreditoAprobar(gerente_aprobador_id=gerente.id))
 
         print("Datos de prueba cargados correctamente.")
-        print("Usuarios: admin/Admin123, gerente/Gerente123, cajero/Cajero123, contador/Contador123")
+        print("Usuarios: admin/Admin123, gerente/Gerente123, cajero/Cajero123, contador/Contador123, socio/Socio123")
         print(f"Socio de prueba: {socio.cedula}")
         print(f"Cuenta activa: {cuenta.numero_cuenta}")
         print("API Key externa: API-KEY-DEMO-123")
@@ -168,4 +184,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

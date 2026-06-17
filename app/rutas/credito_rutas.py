@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.controladores import credito_controlador
 from app.database import obtener_db
+from app.dependencias import obtener_usuario_actual
 from app.esquemas.credito_esquema import CreditoAprobar, CreditoDesembolsar, CreditoRechazar, CreditoRespuesta, CreditoSolicitar, PagoCuotaSolicitud
 from app.esquemas.cuota_amortizacion_esquema import CuotaAmortizacionRespuesta
 
@@ -28,6 +29,13 @@ def listar(skip: int = 0, limit: int = 100, db: Session = Depends(obtener_db)):
     """Lista creditos registrados."""
 
     return credito_controlador.listar(db, skip, limit)
+
+
+@router.get("/mis-creditos", response_model=list[CreditoRespuesta], summary="Listar creditos permitidos")
+def mis_creditos(db: Session = Depends(obtener_db), usuario=Depends(obtener_usuario_actual)):
+    """Lista todos los creditos para personal interno y solo los propios para socios."""
+
+    return credito_controlador.listar_para_usuario(db, usuario)
 
 
 @router.get("/socio/{socio_id}", response_model=list[CreditoRespuesta], summary="Creditos por socio")
@@ -77,4 +85,3 @@ def listar_cuotas(id: int, db: Session = Depends(obtener_db)):
     """Lista tabla de amortizacion del credito."""
 
     return credito_controlador.listar_cuotas(db, id)
-
