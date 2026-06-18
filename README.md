@@ -2,7 +2,7 @@
 
 Backend funcional desarrollado para la Tarea T02.03 de Ingenieria de Software. El sistema implementa servicios REST documentados con Swagger para administrar usuarios, socios, cuentas de ahorro, depositos, retiros, aportaciones, creditos, cuotas de amortizacion, libro diario contable, reportes y una API externa de consulta de movimientos.
 
-Repositorio placeholder: https://github.com/usuario/sistema-caja-ahorros-backend
+Repositorio: https://github.com/steevenmc04/Proyecto-Ing-Software
 
 ## Objetivo academico
 
@@ -63,20 +63,14 @@ sistema-caja-ahorros-backend/
 
 ## Documentacion academica T02.03
 
-La carpeta `docs/` contiene los documentos solicitados por la tarea:
-
-- Requerimientos del sistema.
-- Diseno y arquitectura.
-- Tareas de seguimiento.
-- Evidencias de funcionamiento.
-- Conclusiones de 200 palabras.
-- PDF de soporte para AVAC.
-
-Archivo PDF generado:
+La documentacion solicitada por la tarea esta consolidada en un solo archivo:
 
 ```text
-docs/T02_03_GrupoXX_MartinezSteeven.pdf
+docs/README.md
 ```
+
+Ese README incluye requerimientos, diseno, tareas de seguimiento, evidencias,
+conclusiones de 200 palabras, rubrica, despliegue, pruebas, seguridad y API.
 
 ## Instalacion paso a paso
 
