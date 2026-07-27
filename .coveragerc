@@ -1,0 +1,17 @@
+[run]
+source = app
+omit =
+    app/database.py
+    app/modelos/__init__.py
+    app/config.py
+
+[report]
+show_missing = True
+fail_under = 80
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self.debug:
+    if __name__ == .__main__.:
+    raise NotImplementedError
+    pass

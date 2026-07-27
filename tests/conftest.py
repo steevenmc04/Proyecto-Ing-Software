@@ -11,8 +11,11 @@ from fastapi.testclient import TestClient
 os.environ["DATABASE_URL"] = "sqlite:///./test_caja_ahorros.db"
 
 from app.database import Base, engine
+from app.database import SesionLocal
 from app.main import app
 from app.modelos import *  # noqa: F401,F403 - registra modelos en pruebas
+from app.modelos.usuario_modelo import RolUsuario, Usuario
+from app.utilidades.seguridad import crear_token_jwt, hashear_contrasena
 
 
 @pytest.fixture()
@@ -21,7 +24,24 @@ def cliente():
 
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
+    db = SesionLocal()
+    try:
+        administrador_pruebas = Usuario(
+            nombre_usuario="admin_pruebas",
+            nombre_completo="Administrador De Pruebas",
+            correo="admin.pruebas@caja.test",
+            rol=RolUsuario.ADMINISTRADOR,
+            contrasena_hash=hashear_contrasena("Pruebas123"),
+            activo=True,
+        )
+        db.add(administrador_pruebas)
+        db.commit()
+    finally:
+        db.close()
+
+    token = crear_token_jwt("admin_pruebas", RolUsuario.ADMINISTRADOR.value)
     with TestClient(app) as cliente_prueba:
+        cliente_prueba.headers.update({"Authorization": f"Bearer {token}"})
         yield cliente_prueba
     Base.metadata.drop_all(bind=engine)
 
