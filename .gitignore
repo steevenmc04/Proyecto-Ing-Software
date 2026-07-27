@@ -1,28 +1,55 @@
-# Archivo: .gitignore
-# Descripcion: Archivos ignorados por Git para el backend.
-# Autor: Martinez Steeven
-# Version: 1.0
+# Python
 __pycache__/
 *.py[cod]
-*.sqlite
-*.db
-.env
 .venv/
 venv/
 env/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Cobertura y resultados de pruebas
 .coverage
 coverage.xml
 coverage_output.txt
 pytest_output.txt
 htmlcov/
-.mypy_cache/
-.ruff_cache/
-.idea/
-.vscode/
+
+# Entorno y credenciales locales
+.env
+.env.*
+!.env.example
+!frontend/.env.example
+*.pem
+*.key
+
+# Bases de datos locales
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Frontend
 frontend/node_modules/
 frontend/dist/
+frontend/build/
+frontend/.vite/
 frontend/test-results/
 frontend/playwright-report/
 frontend/blob-report/
+
+# Editor y sistema operativo
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Temporales y logs
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+logs/
 tmp/
