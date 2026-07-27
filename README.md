@@ -1,49 +1,66 @@
 # Sistema de Gestion de Caja de Ahorros
 
-Backend funcional desarrollado para la Tarea T02.03 de Ingenieria de Software. El sistema implementa servicios REST documentados con Swagger para administrar usuarios, socios, cuentas de ahorro, depositos, retiros, aportaciones, creditos, cuotas de amortizacion, libro diario contable, reportes y una API externa de consulta de movimientos.
+Aplicacion web universitaria para administrar usuarios, socios, cuentas de
+ahorro, transacciones, aportaciones, creditos, amortizacion, contabilidad y
+reportes. El frontend React consume la API FastAPI real; no utiliza datos
+codificados para simular operaciones.
 
-Repositorio: https://github.com/steevenmc04/Proyecto-Ing-Software
+- Autor: Steeven Ariel Martinez Campos
+- Grupo: 01
+- Repositorio: https://github.com/steevenmc04/Proyecto-Ing-Software
+- Documentacion API: http://127.0.0.1:8000/docs
 
-## Objetivo academico
+![Panel principal](docs/evidencias/03_dashboard.png)
 
-Demostrar la implementacion backend del sistema definido en T02.01 SRS y T02.02 DDS, usando una arquitectura por capas tipo modelo, repositorio, servicio, controlador y ruta. La entrega queda lista para ejecutarse localmente y publicarse en GitHub.
+## Objetivo y alcance
 
-## Tecnologias usadas
+El proyecto integra los requerimientos T02.01, el diseno T02.02, el backend
+T02.03 y las pruebas T02.04 en una aplicacion demostrable de principio a fin.
+Incluye autenticacion, autorizacion por roles, reglas financieras, persistencia
+relacional, interfaz responsiva, pruebas automatizadas, CI y documentacion.
 
-- Python 3.11+
-- FastAPI
-- SQLAlchemy
-- Pydantic
-- Uvicorn
-- SQLite para desarrollo local
-- `DATABASE_URL` preparado para PostgreSQL o MySQL
-- BCrypt para contrasenas
-- JWT basico con PyJWT
-- Pytest para pruebas
-- Swagger en `/docs`
-- Redoc en `/redoc`
+## Tecnologias reales
 
-## Arquitectura del proyecto
+### Backend
 
-La arquitectura separa responsabilidades:
+- Python 3.11 o superior.
+- FastAPI 0.115, Uvicorn y Pydantic 2.
+- SQLAlchemy 2.
+- SQLite para desarrollo y pruebas.
+- MySQL mediante PyMySQL para uso con MySQL Workbench.
+- JWT, BCrypt, Pytest, Coverage y Ruff.
 
-- `modelos`: entidades SQLAlchemy y relaciones.
-- `esquemas`: modelos Pydantic para request y response.
-- `repositorios`: consultas a base de datos.
-- `servicios`: reglas de negocio.
-- `controladores`: capa intermedia entre rutas y servicios.
-- `rutas`: endpoints REST documentados.
-- `utilidades`: seguridad, generadores y respuestas comunes.
+### Frontend
 
-## Estructura de carpetas
+- React 19, TypeScript 6 y Vite 8.
+- React Router, React Hook Form y Zod.
+- Lucide React.
+- jsPDF, jsPDF-AutoTable y write-excel-file.
+- Vitest, React Testing Library y Playwright.
+
+## Arquitectura
+
+El backend conserva la separacion:
 
 ```text
-sistema-caja-ahorros-backend/
+Ruta -> Controlador -> Servicio -> Repositorio -> Modelo -> Base de datos
+```
+
+El frontend se organiza por modulos y comparte autenticacion, cliente HTTP,
+componentes y utilidades. Las operaciones financieras se validan en el servicio
+y se confirman con rollback ante errores.
+
+Documentos:
+
+- [Arquitectura completa](docs/ARQUITECTURA_COMPLETA.md)
+- [Arquitectura frontend](docs/ARQUITECTURA_FRONTEND.md)
+- [Contrato de las 58 operaciones](docs/CONTRATO_API.md)
+
+## Estructura
+
+```text
+ProyectoIngSoftware/
 |-- app/
-|   |-- main.py
-|   |-- config.py
-|   |-- database.py
-|   |-- dependencias.py
 |   |-- modelos/
 |   |-- esquemas/
 |   |-- repositorios/
@@ -51,295 +68,277 @@ sistema-caja-ahorros-backend/
 |   |-- controladores/
 |   |-- rutas/
 |   `-- utilidades/
+|-- frontend/
+|   |-- src/
+|   |-- tests-e2e/
+|   `-- package.json
 |-- tests/
+|   |-- unit/
+|   `-- integration/
+|-- scripts/
 |-- docs/
+|   |-- evidencias/
+|   `-- entrega/
 |-- seed.py
-|-- requirements.txt
-|-- README.md
-|-- .env.example
-|-- .gitignore
-`-- run.py
+|-- database_mysql.sql
+`-- README.md
 ```
 
-## Documentacion academica T02.03
+## Requisitos
 
-La documentacion solicitada por la tarea esta consolidada en un solo archivo:
+- Python 3.11+.
+- Node.js 20+ y npm.
+- Git.
+- MySQL Server y MySQL Workbench solo si se usara MySQL.
 
-```text
-docs/README.md
+## Instalacion en Windows
+
+Desde PowerShell:
+
+```powershell
+cd C:\Users\steeven\Documents\ProyectoIngSoftware
+powershell -ExecutionPolicy Bypass -File .\scripts\instalar.ps1
+Copy-Item .env.example .env
+Copy-Item frontend\.env.example frontend\.env
+python seed.py
 ```
 
-Ese README incluye requerimientos, diseno, tareas de seguimiento, evidencias,
-conclusiones de 200 palabras, rubrica, despliegue, pruebas, seguridad y API.
+Equivalente manual:
 
-## Instalacion paso a paso
-
-```bash
+```powershell
 python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+Set-Location frontend
+npm ci
+Set-Location ..
+python seed.py
 ```
+
+El seed es idempotente y crea datos academicos coherentes.
 
 ## Variables de entorno
 
-Copiar `.env.example` a `.env` si se desea personalizar configuracion:
+Copiar `.env.example` a `.env` y cambiar las claves antes de cualquier entorno
+distinto del desarrollo local.
 
 ```env
+NOMBRE_APP=Sistema de Gestion de Caja de Ahorros
+VERSION=1.0
 DATABASE_URL=sqlite:///./caja_ahorros.db
-CLAVE_JWT=clave-academica-cambiar-en-produccion
-API_KEY_EXTERNA=API-KEY-DEMO-123
+CLAVE_JWT=reemplazar-por-secreto-aleatorio
+ALGORITMO_JWT=HS256
+MINUTOS_EXPIRACION_JWT=480
+API_KEY_EXTERNA=reemplazar-por-clave-externa
+ORIGENES_CORS=http://127.0.0.1:5173,http://localhost:5173
 ```
 
-Para MySQL Workbench se debe usar MySQL Server y el driver `pymysql`, incluido en `requirements.txt`.
+Frontend:
 
-Ejemplo para MySQL:
+```env
+VITE_API_URL=http://127.0.0.1:8000/api/v1
+```
+
+Los archivos `.env` no se versionan.
+
+## Base de datos
+
+SQLite es el valor predeterminado. SQLAlchemy crea las tablas y
+`aplicar_migraciones_ligeras()` mantiene compatibilidad con la version
+academica existente. El proyecto no utiliza Alembic; esta limitacion se
+documenta para una futura evolucion.
+
+### MySQL Workbench
+
+1. Abrir `database_mysql.sql` en MySQL Workbench.
+2. Ejecutar el script completo.
+3. Configurar `.env`:
 
 ```env
 DATABASE_URL=mysql+pymysql://usuario_caja:ClaveCaja123@localhost:3306/caja_ahorros
 ```
 
-## Usar MySQL Workbench
+4. Ejecutar `python seed.py`.
+5. Iniciar FastAPI.
 
-1. Abrir MySQL Workbench y conectarse al servidor local.
-2. Abrir el archivo `database_mysql.sql`.
-3. Ejecutar todo el script para crear:
-   - Base de datos `caja_ahorros`
-   - Usuario `usuario_caja`
-   - Permisos sobre la base
-4. Crear un archivo `.env` copiando `.env.example`.
-5. En `.env`, activar esta linea:
+## Levantar el proyecto
 
-```env
-DATABASE_URL=mysql+pymysql://usuario_caja:ClaveCaja123@localhost:3306/caja_ahorros
-```
-
-6. Instalar dependencias:
-
-```bash
-pip install -r requirements.txt
-```
-
-7. Iniciar el backend para que SQLAlchemy cree las tablas en MySQL:
-
-```bash
-uvicorn app.main:app --reload
-```
-
-8. En otra terminal, cargar datos de prueba:
-
-```bash
-python seed.py
-```
-
-Despues de eso, puedes revisar las tablas desde MySQL Workbench en el esquema `caja_ahorros`.
-
-## Ejecutar servidor
-
-```bash
-uvicorn app.main:app --reload
-```
-
-Tambien se puede ejecutar:
-
-```bash
-python run.py
-```
-
-## Levantar todo el proyecto localmente
-
-### Opcion rapida con SQLite
+Terminal 1, backend:
 
 ```powershell
-cd C:\Users\steeven\Documents\ProyectoIngSoftware
-python -m venv .venv
-.\.venv\Scripts\activate
-pip install -r requirements.txt
-copy .env.example .env
-python seed.py
-uvicorn app.main:app --reload
+powershell -ExecutionPolicy Bypass -File .\scripts\iniciar-backend.ps1
 ```
 
-Abrir en el navegador:
+Terminal 2, frontend:
 
-- Pagina funcional: http://127.0.0.1:8000
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\iniciar-frontend.ps1
+```
+
+Abrir:
+
+- Frontend: http://127.0.0.1:5173
 - Swagger: http://127.0.0.1:8000/docs
-- Redoc: http://127.0.0.1:8000/redoc
-- Salud API: http://127.0.0.1:8000/salud
+- ReDoc: http://127.0.0.1:8000/redoc
+- OpenAPI: http://127.0.0.1:8000/openapi.json
+- Salud: http://127.0.0.1:8000/api/v1/salud
 
-La pagina funcional inicia con login. Despues muestra un menu desplegable con panel general, socios, cuentas, transacciones, creditos, reportes y API externa.
-
-Usuarios recomendados para probar:
-
-- Personal interno: `admin` / `Admin123`
-- Cliente socio: `socio` / `Socio123`
-
-Si ingresas como `admin`, se muestran formularios operativos para administrar el sistema. Si ingresas como `socio`, el sistema filtra los datos y solo muestra el perfil, cuentas y movimientos asociados a ese cliente.
-
-### Opcion con MySQL Workbench
+### Build integrado
 
 ```powershell
-cd C:\Users\steeven\Documents\ProyectoIngSoftware
-python -m venv .venv
-.\.venv\Scripts\activate
-pip install -r requirements.txt
+Set-Location frontend
+npm run build
+Set-Location ..
+powershell -ExecutionPolicy Bypass -File .\scripts\iniciar-backend.ps1
 ```
 
-Luego en MySQL Workbench ejecutar:
+Con `frontend/dist` presente, FastAPI sirve la SPA tambien en
+http://127.0.0.1:8000.
 
-```text
-database_mysql.sql
+## Roles
+
+| Rol | Permisos principales |
+|---|---|
+| ADMINISTRADOR | Usuarios, configuracion, consulta y operaciones generales |
+| GERENTE | Decisiones de credito, cartera y reportes |
+| CAJERO | Socios, cuentas, transacciones, aportaciones y cobros |
+| CONTADOR | Libro Diario y reportes contables |
+| SOCIO | Sus propias cuentas, movimientos y creditos |
+
+El backend valida los roles; ocultar un boton en React no sustituye esta
+autorizacion.
+
+## Credenciales academicas
+
+Solo para la base creada por `seed.py`:
+
+| Rol | Usuario | Contrasena |
+|---|---|---|
+| Administrador | `admin` | `Admin123` |
+| Gerente | `gerente` | `Gerente123` |
+| Cajero | `cajero` | `Cajero123` |
+| Contador | `contador` | `Contador123` |
+| Socio | `socio` | `Socio123` |
+
+No deben utilizarse en produccion.
+
+## Modulos y flujos
+
+- Usuarios: crear, listar, asignar rol, activar y desactivar.
+- Socios: registrar, buscar, consultar detalle y cambiar estado.
+- Cuentas: abrir, consultar saldo, bloquear, desbloquear y cerrar con saldo cero.
+- Transacciones: deposito, retiro, comprobante, historial y asiento.
+- Aportaciones: tipos, deposito, retiro a partir de seis meses y resumen.
+- Creditos: solicitud, decision, amortizacion francesa, desembolso y pago.
+- Contabilidad: partida doble y trazabilidad del origen.
+- Reportes: Libro Diario, ahorros, cartera y aportaciones; PDF y XLSX.
+- API externa: saldo y ultimos tres movimientos mediante `X-API-KEY`.
+
+## API externa
+
+```http
+GET /api/v1/cuenta/movimientos?cedula=0102030405&numeroCuenta=CTA-000001
+X-API-KEY: valor-configurado-en-el-servidor
 ```
 
-Crear `.env` y dejar activo:
+La clave externa nunca se incluye en JavaScript publico.
 
-```env
-DATABASE_URL=mysql+pymysql://usuario_caja:ClaveCaja123@localhost:3306/caja_ahorros
-```
+## Pruebas y cobertura
 
-Despues:
+Verificacion completa sin E2E:
 
 ```powershell
-python seed.py
-uvicorn app.main:app --reload
+powershell -ExecutionPolicy Bypass -File .\scripts\verificar.ps1
 ```
 
-### Comandos utiles de limpieza
+Incluir los doce flujos E2E:
 
 ```powershell
-Get-ChildItem -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
-Remove-Item -Recurse -Force .pytest_cache -ErrorAction SilentlyContinue
-Remove-Item -Force caja_ahorros.db -ErrorAction SilentlyContinue
+powershell -ExecutionPolicy Bypass -File .\scripts\verificar.ps1 -IncluirE2E
 ```
 
-## Cargar datos de prueba
+Comandos individuales:
 
-```bash
-python seed.py
+```powershell
+ruff check app tests seed.py scripts
+pytest -q
+Set-Location frontend
+npm run lint
+npm test
+npm run build
+npm run test:e2e
 ```
 
-Datos creados:
+Ultima verificacion local:
 
-- Administrador: `admin` / `Admin123`
-- Gerente: `gerente` / `Gerente123`
-- Cajero: `cajero` / `Cajero123`
-- Contador: `contador` / `Contador123`
-- Cliente socio: `socio` / `Socio123`
-- Socio de prueba con cedula `0102030405`
-- Cuenta de ahorro activa
-- Tres depositos y un retiro
-- Aportacion ordinaria
-- Credito pendiente
-- Credito aprobado con cuotas
-- Asientos contables relacionados
+- Backend: 38 pruebas aprobadas.
+- Cobertura backend: 83.37%.
+- Frontend: 8 pruebas aprobadas.
+- E2E: 12 flujos completos aprobados en Chromium.
+- ESLint, Ruff y build: aprobados.
 
-## Ejecutar pruebas
+## Integracion continua
 
-```bash
-pytest
-```
+`.github/workflows/calidad.yml` ejecuta Ruff, Pytest con cobertura minima de
+70%, ESLint, Vitest y el build de produccion. No contiene secretos.
 
-Las pruebas cubren creacion de socio, cuenta, deposito, retiro, bloqueo por saldo insuficiente, solicitud y aprobacion de credito, generacion de cuotas y consulta de API externa con API Key.
+## Despliegue
+
+El repositorio queda preparado, no publicado en un entorno remoto. Para
+desplegar:
+
+1. Configurar secretos y `DATABASE_URL` en el proveedor.
+2. Limitar `ORIGENES_CORS` al dominio real.
+3. Ejecutar `npm ci && npm run build` en `frontend`.
+4. Ejecutar `python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
+5. Usar un gestor de migraciones antes de evolucionar el esquema en produccion.
+
+## Solucion de problemas
+
+### 401 Unauthorized
+
+Iniciar sesion y enviar `Authorization: Bearer <token>`. La API externa utiliza
+`X-API-KEY`, no JWT.
+
+### No conecta a MySQL
+
+Confirmar que MySQL Server este iniciado, que el esquema exista y que la URL use
+`mysql+pymysql://`.
+
+### El frontend no conecta
+
+Revisar `VITE_API_URL`, iniciar el backend en el puerto 8000 y confirmar
+`ORIGENES_CORS`.
+
+### El puerto esta ocupado
+
+Cerrar el proceso anterior o cambiar el puerto en el script y en la variable de
+URL correspondiente.
 
 ## Documentacion
 
-- Swagger: http://127.0.0.1:8000/docs
-- Redoc: http://127.0.0.1:8000/redoc
+- [Auditoria](docs/AUDITORIA_ESTADO_ACTUAL.md)
+- [Contrato API](docs/CONTRATO_API.md)
+- [Matriz de trazabilidad](docs/MATRIZ_TRAZABILIDAD.md)
+- [Plan de pruebas](docs/PLAN_PRUEBAS.md)
+- [Manual de usuario](docs/MANUAL_USUARIO.md)
+- [Manual tecnico](docs/MANUAL_TECNICO.md)
+- [Tareas](docs/TAREAS_PROYECTO.md)
+- [Guion de exposicion](docs/GUION_EXPOSICION.md)
+- [Checklist](docs/CHECKLIST_ENTREGA.md)
+- [Informe final](docs/entrega/TFINAL_Grupo01_MartinezSteeven.md)
 
-## Endpoints por modulo
+## Riesgos residuales
 
-### Autenticacion
+- No hay migraciones Alembic; se usa creacion y migracion ligera.
+- `npm audit` informa dos entradas de severidad alta asociadas a una vulnerabilidad
+  del modo RSC de React Router 7.18.1. Esta SPA no usa RSC, acciones de servidor
+  ni SSR. Bajar a 7.11.0 reintroduce multiples vulnerabilidades corregidas, por
+  lo que se conserva 7.18.1 y se debe actualizar cuando exista una version
+  compatible corregida.
+- Python 3.14 muestra advertencias internas de FastAPI/Starlette sobre una API de
+  `asyncio`; el entorno soportado de CI es Python 3.11.
 
-- `POST /api/v1/auth/login`
+## Autor
 
-### Usuarios
-
-- `POST /api/v1/usuarios`
-- `GET /api/v1/usuarios`
-- `GET /api/v1/usuarios/{id}`
-- `PUT /api/v1/usuarios/{id}`
-- `PATCH /api/v1/usuarios/{id}/activar`
-- `PATCH /api/v1/usuarios/{id}/desactivar`
-
-### Socios
-
-- `POST /api/v1/socios`
-- `GET /api/v1/socios`
-- `GET /api/v1/socios/{id}`
-- `GET /api/v1/socios/buscar/cedula/{cedula}`
-- `PUT /api/v1/socios/{id}`
-- `PATCH /api/v1/socios/{id}/activar`
-- `PATCH /api/v1/socios/{id}/desactivar`
-
-### Cuentas
-
-- `POST /api/v1/cuentas`
-- `GET /api/v1/cuentas`
-- `GET /api/v1/cuentas/{id}`
-- `GET /api/v1/cuentas/socio/{socio_id}`
-- `GET /api/v1/cuentas/numero/{numero_cuenta}`
-- `PATCH /api/v1/cuentas/{id}/bloquear`
-- `PATCH /api/v1/cuentas/{id}/desbloquear`
-- `PATCH /api/v1/cuentas/{id}/cerrar`
-
-### Transacciones
-
-- `POST /api/v1/transacciones/deposito`
-- `POST /api/v1/transacciones/retiro`
-- `GET /api/v1/transacciones`
-- `GET /api/v1/transacciones/cuenta/{cuenta_id}`
-- `GET /api/v1/transacciones/{id}`
-
-### Aportaciones
-
-- `POST /api/v1/aportaciones/tipos`
-- `GET /api/v1/aportaciones/tipos`
-- `POST /api/v1/aportaciones/deposito`
-- `POST /api/v1/aportaciones/retiro`
-- `GET /api/v1/aportaciones`
-- `GET /api/v1/aportaciones/socio/{socio_id}`
-
-### Creditos y cuotas
-
-- `POST /api/v1/creditos/solicitar`
-- `GET /api/v1/creditos`
-- `GET /api/v1/creditos/{id}`
-- `GET /api/v1/creditos/socio/{socio_id}`
-- `PATCH /api/v1/creditos/{id}/aprobar`
-- `PATCH /api/v1/creditos/{id}/rechazar`
-- `PATCH /api/v1/creditos/{id}/desembolsar`
-- `POST /api/v1/creditos/{id}/pagar-cuota`
-- `GET /api/v1/creditos/{id}/cuotas`
-- `GET /api/v1/cuotas/{id}`
-
-### Libro diario y reportes
-
-- `GET /api/v1/asientos`
-- `GET /api/v1/asientos/{id}`
-- `GET /api/v1/asientos/rango-fechas`
-- `GET /api/v1/reportes/libro-diario`
-- `GET /api/v1/reportes/historial-ahorros/{socio_id}`
-- `GET /api/v1/reportes/cartera-creditos`
-- `GET /api/v1/reportes/resumen-aportaciones/{socio_id}`
-
-### API externa
-
-- `GET /api/v1/cuenta/movimientos?cedula=0102030405&numeroCuenta=CTA-000001`
-- Header requerido: `X-API-KEY: API-KEY-DEMO-123`
-
-## Relaciones entre modulos
-
-- Un usuario registra muchos socios.
-- Un socio tiene muchas cuentas de ahorro.
-- Una cuenta tiene muchas transacciones.
-- Una transaccion actualiza el saldo de la cuenta y genera un asiento contable.
-- Un socio tiene muchas aportaciones.
-- Una aportacion actualiza el total del socio y genera asiento contable.
-- Un socio puede solicitar muchos creditos.
-- Un credito aprobado genera cuotas de amortizacion por metodo frances.
-- El pago de cuotas actualiza saldo pendiente y genera asiento contable.
-- Los reportes consultan datos reales de las tablas.
-- La API externa consulta la misma cuenta y transacciones del historial de ahorros.
-
-## Cumplimiento de T02.03
-
-El proyecto cumple la T02.03 porque implementa un backend funcional con FastAPI, documentacion Swagger, arquitectura por capas, modelos relacionales con SQLAlchemy, schemas Pydantic, reglas de negocio, validaciones con `HTTPException`, autenticacion JWT, seed de datos, pruebas basicas con pytest, README tecnico y configuracion lista para GitHub.
+Steeven Ariel Martinez Campos, Grupo 01.
