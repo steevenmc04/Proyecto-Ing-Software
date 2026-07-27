@@ -18,7 +18,7 @@ jobs:
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt -r requirements-dev.txt
+          pip install -r requirements.txt
       - name: Lint backend
         run: ruff check app tests seed.py scripts
       - name: Pruebas y cobertura

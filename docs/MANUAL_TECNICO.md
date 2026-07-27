@@ -21,15 +21,14 @@ Ruta -> Controlador -> Servicio -> Repositorio -> Modelo -> Base de datos
 git clone https://github.com/steevenmc04/Proyecto-Ing-Software
 cd Proyecto-Ing-Software
 powershell -ExecutionPolicy Bypass -File .\scripts\instalar.ps1
-Copy-Item .env.example .env
-Copy-Item frontend\.env.example frontend\.env
 python seed.py
 ```
 
 ## Configuracion
 
 Backend: `DATABASE_URL`, `CLAVE_JWT`, `API_KEY_EXTERNA`,
-`MINUTOS_EXPIRACION_JWT` y `ORIGENES_CORS`. Frontend: `VITE_API_URL`. Los
+`MINUTOS_EXPIRACION_JWT` y `ORIGENES_CORS`. El backend usa los valores locales
+de `app/config.py` cuando no existe `.env`. Frontend: `VITE_API_URL`. Los
 archivos `.env` no se versionan.
 
 SQLite es el modo local. Para MySQL Workbench, ejecute
@@ -101,4 +100,3 @@ Compile `frontend/dist`, configure secretos en el proveedor, limite CORS al
 dominio real y ejecute Uvicorn tras un proxy HTTPS. FastAPI sirve la SPA
 compilada cuando `frontend/dist` existe. El repositorio esta preparado para
 despliegue, pero no declara una URL remota.
-

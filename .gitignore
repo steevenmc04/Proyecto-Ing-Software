@@ -18,8 +18,6 @@ htmlcov/
 # Entorno y credenciales locales
 .env
 .env.*
-!.env.example
-!frontend/.env.example
 *.pem
 *.key
 

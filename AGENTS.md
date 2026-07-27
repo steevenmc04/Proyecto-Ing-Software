@@ -38,7 +38,6 @@ Instalacion:
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-python -m pip install -r requirements-dev.txt
 ```
 
 Ejecucion:
@@ -94,7 +93,7 @@ La URL se configura con `VITE_API_URL`. El cliente HTTP centralizado esta en
 - JWT debe expirar.
 - La autorizacion backend es obligatoria; ocultar botones no es seguridad.
 - CORS se configura por entorno.
-- Los valores de `.env.example` deben ser ejemplos no utilizables en produccion.
+- Los valores locales de configuracion no deben utilizarse en produccion.
 
 ## Base De Datos
 
@@ -130,7 +129,7 @@ Revisar con especial cuidado antes de modificar:
 - `app/database.py`
 - `app/dependencias.py`
 - `seed.py`
-- `.env.example`
+- `.env`
 - `database_mysql.sql`
 - `.github/workflows/*`
 - `frontend/src/servicios/clienteApi.ts`

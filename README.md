@@ -77,8 +77,7 @@ ProyectoIngSoftware/
 |   `-- integration/
 |-- scripts/
 |-- docs/
-|   |-- evidencias/
-|   `-- entrega/
+|   `-- evidencias/
 |-- seed.py
 |-- database_mysql.sql
 `-- README.md
@@ -98,8 +97,6 @@ Desde PowerShell:
 ```powershell
 cd C:\Users\steeven\Documents\ProyectoIngSoftware
 powershell -ExecutionPolicy Bypass -File .\scripts\instalar.ps1
-Copy-Item .env.example .env
-Copy-Item frontend\.env.example frontend\.env
 python seed.py
 ```
 
@@ -108,7 +105,6 @@ Equivalente manual:
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 Set-Location frontend
 npm ci
 Set-Location ..
@@ -119,8 +115,9 @@ El seed es idempotente y crea datos academicos coherentes.
 
 ## Variables de entorno
 
-Copiar `.env.example` a `.env` y cambiar las claves antes de cualquier entorno
-distinto del desarrollo local.
+El backend funciona localmente con los valores academicos definidos en
+`app/config.py`. Para personalizarlos, crear un archivo `.env` en la raiz con
+las variables necesarias. Ese archivo no se versiona.
 
 ```env
 NOMBRE_APP=Sistema de Gestion de Caja de Ahorros
@@ -133,7 +130,7 @@ API_KEY_EXTERNA=reemplazar-por-clave-externa
 ORIGENES_CORS=http://127.0.0.1:5173,http://localhost:5173
 ```
 
-Frontend:
+Frontend opcional, solo cuando la API use otra direccion:
 
 ```env
 VITE_API_URL=http://127.0.0.1:8000/api/v1
@@ -257,13 +254,12 @@ Incluir los doce flujos E2E:
 powershell -ExecutionPolicy Bypass -File .\scripts\verificar.ps1 -IncluirE2E
 ```
 
-Regenerar evidencias de calidad e informe PDF:
+Regenerar evidencias de calidad:
 
 ```powershell
 Set-Location frontend
 npm run evidencias:calidad
 Set-Location ..
-python scripts\generar_informe_pdf.py
 ```
 
 Comandos individuales:
@@ -333,10 +329,7 @@ URL correspondiente.
 - [Manual de usuario](docs/MANUAL_USUARIO.md)
 - [Manual tecnico](docs/MANUAL_TECNICO.md)
 - [Tareas](docs/TAREAS_PROYECTO.md)
-- [Guion de exposicion](docs/GUION_EXPOSICION.md)
 - [Checklist](docs/CHECKLIST_ENTREGA.md)
-- [Informe final](docs/entrega/TFINAL_Grupo01_MartinezSteeven.md)
-- [Informe final PDF](docs/entrega/TFINAL_Grupo01_MartinezSteeven.pdf)
 
 ## Riesgos residuales
 

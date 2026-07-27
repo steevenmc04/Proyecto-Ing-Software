@@ -37,6 +37,5 @@ existen implementacion, prueba automatizada y evidencia verificable.
 | RNF-002 | Interfaz responsiva | Capturas de escritorio y movil | CUMPLE |
 | RNF-003 | Cobertura minima de 70% | Pytest y Coverage | CUMPLE |
 | RNF-004 | Build de produccion | `npm run build` | CUMPLE |
-| RNF-005 | Sin secretos versionados | `.env.example`, `.gitignore` y revision Git | CUMPLE |
+| RNF-005 | Sin secretos versionados | Configuracion por entorno, `.gitignore` y revision Git | CUMPLE |
 | RNF-006 | Despliegue remoto | No se solicito proveedor ni credenciales | NO VERIFICADO |
-

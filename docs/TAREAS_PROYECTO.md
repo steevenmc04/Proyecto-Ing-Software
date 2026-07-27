@@ -17,9 +17,9 @@ de las tareas de cierre es Steeven Ariel Martinez Campos.
 | TS-010 | Implementar contabilidad | Libro Diario y reportes exportables | Steeven Ariel Martinez Campos | COMPLETADA | Media | Evidencias 12-13 | `44fad41` |
 | TS-011 | Automatizar pruebas | Vitest, Playwright, Ruff, ESLint y CI | Steeven Ariel Martinez Campos | COMPLETADA | Alta | `PLAN_PRUEBAS.md` | `137fd52` |
 | TS-012 | Documentar contrato | Matriz generada desde OpenAPI real | Steeven Ariel Martinez Campos | COMPLETADA | Media | `CONTRATO_API.md` | `a6dc9df` |
-| TS-013 | Preparar manuales | Usuario, tecnico, trazabilidad y guion | Steeven Ariel Martinez Campos | COMPLETADA | Media | `docs/` | `a6dc9df` |
+| TS-013 | Preparar manuales | Usuario, tecnico y trazabilidad | Steeven Ariel Martinez Campos | COMPLETADA | Media | `docs/` | `a6dc9df` |
 | TS-014 | Crear evidencias | Capturas reales de UI, Swagger y verificaciones | Steeven Ariel Martinez Campos | COMPLETADA | Media | `docs/evidencias/` | `version final` |
-| TS-015 | Generar informe | Markdown y PDF reproducible | Steeven Ariel Martinez Campos | COMPLETADA | Alta | `docs/entrega/` | `version final` |
+| TS-015 | Consolidar documentacion | Instrucciones completas del proyecto | Steeven Ariel Martinez Campos | COMPLETADA | Alta | `README.md` | `version final` |
 
 El hash de `version final` se obtiene con `git log -1 --oneline` despues de
 crear el cierre; incluirlo dentro del propio commit produciria un hash nuevo.
