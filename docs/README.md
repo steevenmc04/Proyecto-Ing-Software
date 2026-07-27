@@ -17,5 +17,7 @@ analisis y entrega que requieren mayor detalle.
 | [TAREAS_PROYECTO.md](TAREAS_PROYECTO.md) | Seguimiento del trabajo |
 | [GUION_EXPOSICION.md](GUION_EXPOSICION.md) | Presentacion de 8 a 12 minutos |
 | [CHECKLIST_ENTREGA.md](CHECKLIST_ENTREGA.md) | Control final |
+| [LIMPIEZA_PREVIA.md](LIMPIEZA_PREVIA.md) | Inventario y decisiones antes de limpiar |
+| [LIMPIEZA_REALIZADA.md](LIMPIEZA_REALIZADA.md) | Archivos retirados y verificacion posterior |
 | [evidencias](evidencias) | Capturas reales |
 | [entrega](entrega) | Informe Markdown y PDF |
