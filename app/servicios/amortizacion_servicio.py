@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from app.modelos.credito_modelo import Credito
 from app.modelos.cuota_amortizacion_modelo import CuotaAmortizacion, EstadoCuota
+from app.utilidades.fechas import ahora_utc
 
 
 CENTAVO = Decimal("0.01")
@@ -52,7 +53,7 @@ class AmortizacionServicio:
             cuota_fija = principal * ((tasa_mensual * factor) / (factor - Decimal("1")))
 
         saldo = principal
-        hoy = date.today()
+        hoy = ahora_utc().date()
         cuotas = []
         for numero in range(1, plazo + 1):
             interes = self._redondear(saldo * tasa_mensual)
@@ -78,4 +79,3 @@ class AmortizacionServicio:
 
 
 amortizacion_servicio = AmortizacionServicio()
-

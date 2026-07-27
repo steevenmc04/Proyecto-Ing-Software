@@ -9,6 +9,7 @@ from decimal import Decimal
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.database import confirmar_transaccion
 from app.esquemas.transaccion_esquema import TransaccionCrear
 from app.modelos.asiento_contable_modelo import TipoOrigenAsiento
 from app.modelos.cuenta_ahorro_modelo import EstadoCuenta
@@ -60,7 +61,7 @@ class TransaccionServicio:
             tipo_origen=TipoOrigenAsiento.TRANSACCION,
             transaccion_id=transaccion.id,
         )
-        db.commit()
+        confirmar_transaccion(db)
         db.refresh(transaccion)
         return transaccion
 
@@ -94,7 +95,7 @@ class TransaccionServicio:
             tipo_origen=TipoOrigenAsiento.TRANSACCION,
             transaccion_id=transaccion.id,
         )
-        db.commit()
+        confirmar_transaccion(db)
         db.refresh(transaccion)
         return transaccion
 

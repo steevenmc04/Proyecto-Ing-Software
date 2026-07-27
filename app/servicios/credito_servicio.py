@@ -4,16 +4,17 @@ Autor: Martinez Steeven
 Version: 1.0
 """
 
-from datetime import datetime
 from decimal import Decimal
 
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.database import confirmar_transaccion
 from app.esquemas.credito_esquema import CreditoAprobar, CreditoDesembolsar, CreditoRechazar, CreditoSolicitar, PagoCuotaSolicitud
 from app.modelos.asiento_contable_modelo import TipoOrigenAsiento
 from app.modelos.credito_modelo import Credito, EstadoCredito
 from app.modelos.cuota_amortizacion_modelo import EstadoCuota
+from app.modelos.socio_modelo import EstadoSocio
 from app.modelos.usuario_modelo import RolUsuario
 from app.repositorios.credito_repositorio import credito_repositorio
 from app.repositorios.cuota_amortizacion_repositorio import cuota_amortizacion_repositorio
@@ -21,6 +22,7 @@ from app.repositorios.socio_repositorio import socio_repositorio
 from app.repositorios.usuario_repositorio import usuario_repositorio
 from app.servicios.amortizacion_servicio import amortizacion_servicio
 from app.servicios.asiento_contable_servicio import asiento_contable_servicio
+from app.utilidades.fechas import ahora_utc
 from app.utilidades.generadores import generar_codigo_secuencial
 
 
@@ -30,8 +32,14 @@ class CreditoServicio:
     def solicitar(self, db: Session, datos: CreditoSolicitar):
         """Registra solicitud con estado inicial PENDIENTE."""
 
-        if not socio_repositorio.obtener(db, datos.socio_id):
+        socio = socio_repositorio.obtener(db, datos.socio_id)
+        if not socio:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Socio no encontrado")
+        if socio.estado != EstadoSocio.ACTIVO:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Un socio inactivo no puede solicitar creditos",
+            )
         credito = Credito(
             numero_credito=generar_codigo_secuencial(db, Credito, "numero_credito", "CRE"),
             socio_id=datos.socio_id,
@@ -80,16 +88,23 @@ class CreditoServicio:
         credito = self.obtener(db, credito_id)
         if credito.estado != EstadoCredito.PENDIENTE:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Solo se puede aprobar un credito pendiente")
-        if datos.gerente_aprobador_id and not usuario_repositorio.obtener(db, datos.gerente_aprobador_id):
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Gerente aprobador no encontrado")
+        if datos.gerente_aprobador_id:
+            gerente = usuario_repositorio.obtener(db, datos.gerente_aprobador_id)
+            if not gerente:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Gerente aprobador no encontrado")
+            if gerente.rol not in [RolUsuario.GERENTE, RolUsuario.ADMINISTRADOR]:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="El usuario aprobador debe tener rol GERENTE o ADMINISTRADOR",
+                )
         monto_aprobado = datos.monto_aprobado or credito.monto_solicitado
         credito.monto_aprobado = monto_aprobado
         credito.saldo_pendiente = monto_aprobado
         credito.gerente_aprobador_id = datos.gerente_aprobador_id
-        credito.fecha_aprobacion = datetime.utcnow()
+        credito.fecha_aprobacion = ahora_utc()
         credito.estado = EstadoCredito.APROBADO
         amortizacion_servicio.generar_tabla(db, credito)
-        db.commit()
+        confirmar_transaccion(db)
         db.refresh(credito)
         return credito
 
@@ -101,7 +116,7 @@ class CreditoServicio:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Solo se puede rechazar un credito pendiente")
         credito.estado = EstadoCredito.RECHAZADO
         credito.motivo_rechazo = datos.motivo_rechazo
-        db.commit()
+        confirmar_transaccion(db)
         db.refresh(credito)
         return credito
 
@@ -111,8 +126,15 @@ class CreditoServicio:
         credito = self.obtener(db, credito_id)
         if credito.estado != EstadoCredito.APROBADO:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="El credito debe estar aprobado")
-        if datos.cajero_desembolso_id and not usuario_repositorio.obtener(db, datos.cajero_desembolso_id):
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cajero de desembolso no encontrado")
+        if datos.cajero_desembolso_id:
+            cajero = usuario_repositorio.obtener(db, datos.cajero_desembolso_id)
+            if not cajero:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cajero de desembolso no encontrado")
+            if cajero.rol not in [RolUsuario.CAJERO, RolUsuario.ADMINISTRADOR]:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="El usuario de desembolso debe tener rol CAJERO o ADMINISTRADOR",
+                )
         credito.estado = EstadoCredito.DESEMBOLSADO
         credito.cajero_desembolso_id = datos.cajero_desembolso_id
         asiento_contable_servicio.crear_automatico(
@@ -124,7 +146,7 @@ class CreditoServicio:
             tipo_origen=TipoOrigenAsiento.CREDITO,
             credito_id=credito.id,
         )
-        db.commit()
+        confirmar_transaccion(db)
         db.refresh(credito)
         return credito
 
@@ -132,10 +154,17 @@ class CreditoServicio:
         """Paga la primera cuota pendiente, reduce saldo y genera asiento."""
 
         credito = self.obtener(db, credito_id)
-        if credito.estado not in [EstadoCredito.APROBADO, EstadoCredito.DESEMBOLSADO, EstadoCredito.EN_PAGO]:
+        if credito.estado not in [EstadoCredito.DESEMBOLSADO, EstadoCredito.EN_PAGO]:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="El credito no admite pagos de cuotas")
-        if datos.usuario_cajero_id and not usuario_repositorio.obtener(db, datos.usuario_cajero_id):
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario cajero no encontrado")
+        if datos.usuario_cajero_id:
+            cajero = usuario_repositorio.obtener(db, datos.usuario_cajero_id)
+            if not cajero:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario cajero no encontrado")
+            if cajero.rol not in [RolUsuario.CAJERO, RolUsuario.ADMINISTRADOR]:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="El usuario de pago debe tener rol CAJERO o ADMINISTRADOR",
+                )
         cuota = cuota_amortizacion_repositorio.obtener_siguiente_pendiente(db, credito_id)
         if not cuota:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No existen cuotas pendientes")
@@ -154,7 +183,7 @@ class CreditoServicio:
         credito.estado = EstadoCredito.CANCELADO if not pendientes else EstadoCredito.EN_PAGO
         if credito.estado == EstadoCredito.CANCELADO:
             credito.saldo_pendiente = Decimal("0.00")
-        db.commit()
+        confirmar_transaccion(db)
         db.refresh(cuota)
         return cuota
 

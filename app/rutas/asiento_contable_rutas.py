@@ -11,10 +11,16 @@ from sqlalchemy.orm import Session
 
 from app.controladores import asiento_contable_controlador
 from app.database import obtener_db
+from app.dependencias import requerir_roles
 from app.esquemas.asiento_contable_esquema import AsientoContableRespuesta
+from app.modelos.usuario_modelo import RolUsuario
 
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[
+        Depends(requerir_roles(RolUsuario.ADMINISTRADOR, RolUsuario.GERENTE, RolUsuario.CONTADOR))
+    ]
+)
 
 
 @router.get("", response_model=list[AsientoContableRespuesta], summary="Listar asientos contables")
@@ -36,4 +42,3 @@ def obtener(id: int, db: Session = Depends(obtener_db)):
     """Consulta un asiento por ID."""
 
     return asiento_contable_controlador.obtener(db, id)
-

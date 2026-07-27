@@ -5,12 +5,12 @@ Version: 1.0
 """
 
 import enum
-from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+from app.utilidades.fechas import ahora_utc
 
 
 class OperacionAportacion(str, enum.Enum):
@@ -29,7 +29,7 @@ class Aportacion(Base):
     tipo_aportacion_id = Column(Integer, ForeignKey("tipos_aportacion.id"), nullable=False)
     operacion = Column(Enum(OperacionAportacion), nullable=False)
     monto = Column(Numeric(12, 2), nullable=False)
-    fecha = Column(DateTime, default=datetime.utcnow, nullable=False)
+    fecha = Column(DateTime, default=ahora_utc, nullable=False)
     descripcion = Column(String(250), nullable=True)
     socio_id = Column(Integer, ForeignKey("socios.id"), nullable=False)
     usuario_cajero_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
@@ -38,4 +38,3 @@ class Aportacion(Base):
     tipo_aportacion = relationship("TipoAportacion", back_populates="aportaciones")
     usuario_cajero = relationship("Usuario", foreign_keys=[usuario_cajero_id], back_populates="aportaciones_cajero")
     asiento_contable = relationship("AsientoContable", back_populates="aportacion", uselist=False)
-

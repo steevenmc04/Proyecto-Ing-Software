@@ -9,21 +9,41 @@ from sqlalchemy.orm import Session
 
 from app.controladores import cuenta_ahorro_controlador
 from app.database import obtener_db
-from app.dependencias import obtener_usuario_actual
+from app.dependencias import obtener_usuario_actual, requerir_roles
 from app.esquemas.cuenta_ahorro_esquema import CuentaAhorroCrear, CuentaAhorroRespuesta
+from app.modelos.usuario_modelo import RolUsuario
 
 
 router = APIRouter()
 
 
-@router.post("", response_model=CuentaAhorroRespuesta, summary="Crear cuenta de ahorro")
+@router.post(
+    "",
+    response_model=CuentaAhorroRespuesta,
+    summary="Crear cuenta de ahorro",
+    dependencies=[Depends(requerir_roles(RolUsuario.ADMINISTRADOR, RolUsuario.CAJERO))],
+)
 def crear(datos: CuentaAhorroCrear, db: Session = Depends(obtener_db)):
     """Crea una cuenta para un socio con saldo inicial cero."""
 
     return cuenta_ahorro_controlador.crear(db, datos.socio_id)
 
 
-@router.get("", response_model=list[CuentaAhorroRespuesta], summary="Listar cuentas")
+@router.get(
+    "",
+    response_model=list[CuentaAhorroRespuesta],
+    summary="Listar cuentas",
+    dependencies=[
+        Depends(
+            requerir_roles(
+                RolUsuario.ADMINISTRADOR,
+                RolUsuario.GERENTE,
+                RolUsuario.CAJERO,
+                RolUsuario.CONTADOR,
+            )
+        )
+    ],
+)
 def listar(skip: int = 0, limit: int = 100, db: Session = Depends(obtener_db)):
     """Lista cuentas de ahorro existentes."""
 
@@ -37,42 +57,99 @@ def mis_cuentas(db: Session = Depends(obtener_db), usuario=Depends(obtener_usuar
     return cuenta_ahorro_controlador.listar_para_usuario(db, usuario)
 
 
-@router.get("/socio/{socio_id}", response_model=list[CuentaAhorroRespuesta], summary="Listar cuentas por socio")
+@router.get(
+    "/socio/{socio_id}",
+    response_model=list[CuentaAhorroRespuesta],
+    summary="Listar cuentas por socio",
+    dependencies=[
+        Depends(
+            requerir_roles(
+                RolUsuario.ADMINISTRADOR,
+                RolUsuario.GERENTE,
+                RolUsuario.CAJERO,
+                RolUsuario.CONTADOR,
+            )
+        )
+    ],
+)
 def listar_por_socio(socio_id: int, db: Session = Depends(obtener_db)):
     """Lista cuentas asociadas a un socio."""
 
     return cuenta_ahorro_controlador.listar_por_socio(db, socio_id)
 
 
-@router.get("/numero/{numero_cuenta}", response_model=CuentaAhorroRespuesta, summary="Obtener cuenta por numero")
+@router.get(
+    "/numero/{numero_cuenta}",
+    response_model=CuentaAhorroRespuesta,
+    summary="Obtener cuenta por numero",
+    dependencies=[
+        Depends(
+            requerir_roles(
+                RolUsuario.ADMINISTRADOR,
+                RolUsuario.GERENTE,
+                RolUsuario.CAJERO,
+                RolUsuario.CONTADOR,
+            )
+        )
+    ],
+)
 def obtener_por_numero(numero_cuenta: str, db: Session = Depends(obtener_db)):
     """Consulta una cuenta usando su numero unico."""
 
     return cuenta_ahorro_controlador.obtener_por_numero(db, numero_cuenta)
 
 
-@router.get("/{id}", response_model=CuentaAhorroRespuesta, summary="Obtener cuenta por ID")
+@router.get(
+    "/{id}",
+    response_model=CuentaAhorroRespuesta,
+    summary="Obtener cuenta por ID",
+    dependencies=[
+        Depends(
+            requerir_roles(
+                RolUsuario.ADMINISTRADOR,
+                RolUsuario.GERENTE,
+                RolUsuario.CAJERO,
+                RolUsuario.CONTADOR,
+            )
+        )
+    ],
+)
 def obtener(id: int, db: Session = Depends(obtener_db)):
     """Consulta una cuenta por ID."""
 
     return cuenta_ahorro_controlador.obtener(db, id)
 
 
-@router.patch("/{id}/bloquear", response_model=CuentaAhorroRespuesta, summary="Bloquear cuenta")
+@router.patch(
+    "/{id}/bloquear",
+    response_model=CuentaAhorroRespuesta,
+    summary="Bloquear cuenta",
+    dependencies=[Depends(requerir_roles(RolUsuario.ADMINISTRADOR, RolUsuario.CAJERO))],
+)
 def bloquear(id: int, db: Session = Depends(obtener_db)):
     """Bloquea la cuenta para impedir operaciones."""
 
     return cuenta_ahorro_controlador.bloquear(db, id)
 
 
-@router.patch("/{id}/desbloquear", response_model=CuentaAhorroRespuesta, summary="Desbloquear cuenta")
+@router.patch(
+    "/{id}/desbloquear",
+    response_model=CuentaAhorroRespuesta,
+    summary="Desbloquear cuenta",
+    dependencies=[Depends(requerir_roles(RolUsuario.ADMINISTRADOR, RolUsuario.CAJERO))],
+)
 def desbloquear(id: int, db: Session = Depends(obtener_db)):
     """Devuelve la cuenta al estado ACTIVA."""
 
     return cuenta_ahorro_controlador.desbloquear(db, id)
 
 
-@router.patch("/{id}/cerrar", response_model=CuentaAhorroRespuesta, summary="Cerrar cuenta")
+@router.patch(
+    "/{id}/cerrar",
+    response_model=CuentaAhorroRespuesta,
+    summary="Cerrar cuenta",
+    dependencies=[Depends(requerir_roles(RolUsuario.ADMINISTRADOR, RolUsuario.CAJERO))],
+)
 def cerrar(id: int, db: Session = Depends(obtener_db)):
     """Cierra la cuenta e impide nuevas operaciones."""
 

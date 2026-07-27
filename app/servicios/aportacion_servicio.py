@@ -4,20 +4,23 @@ Autor: Martinez Steeven
 Version: 1.0
 """
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from decimal import Decimal
 
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.database import confirmar_transaccion
 from app.esquemas.aportacion_esquema import AportacionCrear, TipoAportacionCrear
 from app.modelos.aportacion_modelo import Aportacion, OperacionAportacion
 from app.modelos.asiento_contable_modelo import TipoOrigenAsiento
+from app.modelos.socio_modelo import EstadoSocio
 from app.modelos.tipo_aportacion_modelo import TipoAportacion
 from app.repositorios.aportacion_repositorio import aportacion_repositorio, tipo_aportacion_repositorio
 from app.repositorios.socio_repositorio import socio_repositorio
 from app.repositorios.usuario_repositorio import usuario_repositorio
 from app.servicios.asiento_contable_servicio import asiento_contable_servicio
+from app.utilidades.fechas import ahora_utc
 
 
 class AportacionServicio:
@@ -42,6 +45,11 @@ class AportacionServicio:
         socio = socio_repositorio.obtener(db, datos.socio_id)
         if not socio:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Socio no encontrado")
+        if socio.estado != EstadoSocio.ACTIVO:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No se permiten aportaciones para un socio inactivo",
+            )
         tipo = tipo_aportacion_repositorio.obtener(db, datos.tipo_aportacion_id)
         if not tipo:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tipo de aportacion no encontrado")
@@ -73,7 +81,7 @@ class AportacionServicio:
             tipo_origen=TipoOrigenAsiento.APORTACION,
             aportacion_id=aportacion.id,
         )
-        db.commit()
+        confirmar_transaccion(db)
         db.refresh(aportacion)
         return aportacion
 
@@ -86,7 +94,7 @@ class AportacionServicio:
             .filter(
                 Aportacion.socio_id == datos.socio_id,
                 Aportacion.operacion == OperacionAportacion.DEP,
-                Aportacion.fecha <= datetime.utcnow() - timedelta(days=180),
+                Aportacion.fecha <= ahora_utc() - timedelta(days=180),
             )
             .first()
         )
@@ -114,7 +122,7 @@ class AportacionServicio:
             tipo_origen=TipoOrigenAsiento.APORTACION,
             aportacion_id=aportacion.id,
         )
-        db.commit()
+        confirmar_transaccion(db)
         db.refresh(aportacion)
         return aportacion
 
@@ -132,4 +140,3 @@ class AportacionServicio:
 
 
 aportacion_servicio = AportacionServicio()
-

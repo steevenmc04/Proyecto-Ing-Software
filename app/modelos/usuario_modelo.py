@@ -5,12 +5,12 @@ Version: 1.0
 """
 
 import enum
-from datetime import datetime
 
 from sqlalchemy import Boolean, Column, DateTime, Enum, Integer, String
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+from app.utilidades.fechas import ahora_utc
 
 
 class RolUsuario(str, enum.Enum):
@@ -35,7 +35,7 @@ class Usuario(Base):
     rol = Column(Enum(RolUsuario), nullable=False)
     contrasena_hash = Column(String(255), nullable=False)
     activo = Column(Boolean, default=True, nullable=False)
-    fecha_creacion = Column(DateTime, default=datetime.utcnow, nullable=False)
+    fecha_creacion = Column(DateTime, default=ahora_utc, nullable=False)
 
     socios_registrados = relationship("Socio", foreign_keys="Socio.usuario_registro_id", back_populates="usuario_registro")
     socio_perfil = relationship("Socio", foreign_keys="Socio.usuario_id", back_populates="usuario", uselist=False)

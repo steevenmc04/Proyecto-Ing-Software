@@ -5,12 +5,12 @@ Version: 1.0
 """
 
 import enum
-from datetime import datetime
 
 from sqlalchemy import Column, Date, DateTime, Enum, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+from app.utilidades.fechas import ahora_utc
 
 
 class EstadoSocio(str, enum.Enum):
@@ -36,7 +36,7 @@ class Socio(Base):
     correo = Column(String(120), nullable=False)
     estado = Column(Enum(EstadoSocio), default=EstadoSocio.ACTIVO, nullable=False)
     total_aportaciones = Column(Numeric(12, 2), default=0, nullable=False)
-    fecha_registro = Column(DateTime, default=datetime.utcnow, nullable=False)
+    fecha_registro = Column(DateTime, default=ahora_utc, nullable=False)
     usuario_registro_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
     usuario_id = Column(Integer, ForeignKey("usuarios.id"), unique=True, nullable=True)
 

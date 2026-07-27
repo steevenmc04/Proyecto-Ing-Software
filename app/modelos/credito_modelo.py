@@ -5,12 +5,12 @@ Version: 1.0
 """
 
 import enum
-from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+from app.utilidades.fechas import ahora_utc
 
 
 class EstadoCredito(str, enum.Enum):
@@ -40,7 +40,7 @@ class Credito(Base):
     tipo_garantia = Column(String(100), nullable=False)
     proposito = Column(String(250), nullable=False)
     estado = Column(Enum(EstadoCredito), default=EstadoCredito.PENDIENTE, nullable=False)
-    fecha_solicitud = Column(DateTime, default=datetime.utcnow, nullable=False)
+    fecha_solicitud = Column(DateTime, default=ahora_utc, nullable=False)
     fecha_aprobacion = Column(DateTime, nullable=True)
     motivo_rechazo = Column(String(250), nullable=True)
     gerente_aprobador_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
@@ -52,4 +52,3 @@ class Credito(Base):
     cajero_desembolso = relationship("Usuario", foreign_keys=[cajero_desembolso_id], back_populates="creditos_desembolsados")
     cuotas = relationship("CuotaAmortizacion", back_populates="credito", cascade="all, delete-orphan")
     asientos_contables = relationship("AsientoContable", back_populates="credito")
-

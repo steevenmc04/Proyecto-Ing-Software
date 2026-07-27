@@ -5,12 +5,12 @@ Version: 1.0
 """
 
 import enum
-from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+from app.utilidades.fechas import ahora_utc
 
 
 class TipoOrigenAsiento(str, enum.Enum):
@@ -28,7 +28,7 @@ class AsientoContable(Base):
     __tablename__ = "asientos_contables"
 
     id = Column(Integer, primary_key=True, index=True)
-    fecha = Column(DateTime, default=datetime.utcnow, nullable=False)
+    fecha = Column(DateTime, default=ahora_utc, nullable=False)
     descripcion = Column(String(250), nullable=False)
     cuenta_debito = Column(String(120), nullable=False)
     cuenta_credito = Column(String(120), nullable=False)
@@ -41,4 +41,3 @@ class AsientoContable(Base):
     transaccion = relationship("Transaccion", back_populates="asiento_contable")
     credito = relationship("Credito", back_populates="asientos_contables")
     aportacion = relationship("Aportacion", back_populates="asiento_contable")
-

@@ -4,8 +4,11 @@ Autor: Martinez Steeven
 Version: 1.0
 """
 
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from pathlib import Path
+
+from fastapi import FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import obtener_configuracion
@@ -27,6 +30,9 @@ from app.rutas import (
 
 
 configuracion = obtener_configuracion()
+raiz_proyecto = Path(__file__).resolve().parents[1]
+directorio_frontend = raiz_proyecto / "frontend" / "dist"
+indice_frontend = directorio_frontend / "index.html"
 
 Base.metadata.create_all(bind=engine)
 aplicar_migraciones_ligeras()
@@ -41,7 +47,20 @@ app = FastAPI(
     ),
 )
 
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=configuracion.lista_origenes_cors,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-API-KEY"],
+)
+
+if (directorio_frontend.joinpath("assets").is_dir()):
+    app.mount(
+        "/assets",
+        StaticFiles(directory=directorio_frontend / "assets"),
+        name="frontend-assets",
+    )
 
 app.include_router(auth_rutas.router, prefix="/api/v1/auth", tags=["Autenticacion"])
 app.include_router(usuario_rutas.router, prefix="/api/v1/usuarios", tags=["Usuarios"])
@@ -58,9 +77,11 @@ app.include_router(api_externa_rutas.router, prefix="/api/v1/cuenta", tags=["API
 
 @app.get("/", include_in_schema=False)
 def pagina_inicio():
-    """Sirve la pagina web local para probar el proyecto desde el navegador."""
+    """Sirve el frontend compilado o dirige a Swagger si aun no existe."""
 
-    return FileResponse("app/static/index.html")
+    if indice_frontend.is_file():
+        return FileResponse(indice_frontend)
+    return RedirectResponse("/docs")
 
 
 @app.get("/salud", tags=["Salud"], summary="Verificar estado de la API")
@@ -68,3 +89,27 @@ def raiz():
     """Confirma que la API esta operativa y muestra las rutas de documentacion."""
 
     return {"mensaje": "Sistema de Gestion de Caja de Ahorros API", "swagger": "/docs", "redoc": "/redoc"}
+
+
+@app.get("/api/v1/salud", tags=["Salud"], summary="Verificar estado versionado de la API")
+def salud():
+    """Devuelve el estado estable esperado por clientes y monitoreo."""
+
+    return {"estado": "correcto", "aplicacion": configuracion.nombre_app}
+
+
+@app.get("/{ruta_frontend:path}", include_in_schema=False)
+def pagina_frontend(ruta_frontend: str):
+    """Resuelve rutas y archivos del frontend React compilado."""
+
+    if ruta_frontend.startswith(("api/", "docs", "redoc", "openapi.json")):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    archivo = directorio_frontend / ruta_frontend
+    if archivo.is_file() and directorio_frontend in archivo.resolve().parents:
+        return FileResponse(archivo)
+    if indice_frontend.is_file():
+        return FileResponse(indice_frontend)
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Frontend no compilado. Ejecuta npm run build dentro de frontend.",
+    )

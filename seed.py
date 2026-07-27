@@ -4,7 +4,7 @@ Autor: Martinez Steeven
 Version: 1.0
 """
 
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 
 from app.database import Base, SesionLocal, aplicar_migraciones_ligeras, engine
@@ -14,7 +14,6 @@ from app.esquemas.socio_esquema import SocioCrear
 from app.esquemas.transaccion_esquema import TransaccionCrear
 from app.esquemas.usuario_esquema import UsuarioCrear
 from app.modelos import *  # noqa: F401,F403 - registra todos los modelos
-from app.modelos.aportacion_modelo import Aportacion, OperacionAportacion
 from app.modelos.tipo_aportacion_modelo import NombreTipoAportacion
 from app.modelos.usuario_modelo import RolUsuario
 from app.repositorios.cuenta_ahorro_repositorio import cuenta_ahorro_repositorio
@@ -26,6 +25,7 @@ from app.servicios.cuenta_ahorro_servicio import cuenta_ahorro_servicio
 from app.servicios.socio_servicio import socio_servicio
 from app.servicios.transaccion_servicio import transaccion_servicio
 from app.servicios.usuario_servicio import usuario_servicio
+from app.utilidades.fechas import ahora_utc
 
 
 def crear_usuario_si_no_existe(db, datos: UsuarioCrear):
@@ -143,7 +143,7 @@ def main():
                 AportacionCrear(socio_id=socio.id, tipo_aportacion_id=tipo_ordinaria.id, monto=Decimal("120.00"), descripcion="Aportacion ordinaria inicial", usuario_cajero_id=cajero.id),
             )
             # Se ajusta la fecha para que las pruebas manuales de retiro puedan validar la regla de seis meses.
-            aportacion.fecha = datetime.utcnow() - timedelta(days=190)
+            aportacion.fecha = ahora_utc() - timedelta(days=190)
             db.commit()
 
         if len(credito_servicio.listar(db)) < 1:

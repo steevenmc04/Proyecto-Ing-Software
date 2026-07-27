@@ -31,6 +31,16 @@ def obtener_db():
         db.close()
 
 
+def confirmar_transaccion(db):
+    """Confirma una unidad de trabajo y revierte la sesion si la base falla."""
+
+    try:
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+
+
 def aplicar_migraciones_ligeras():
     """Agrega columnas simples cuando existe una base local creada por una version anterior."""
 

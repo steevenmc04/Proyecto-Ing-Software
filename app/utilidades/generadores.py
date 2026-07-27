@@ -4,10 +4,9 @@ Autor: Martinez Steeven
 Version: 1.0
 """
 
-from datetime import datetime
-
 from sqlalchemy.orm import Session
 
+from app.utilidades.fechas import ahora_utc
 
 def generar_codigo_secuencial(db: Session, modelo, campo: str, prefijo: str, ancho: int = 6) -> str:
     """Genera codigos tipo SOC-000001 asegurando unicidad en la tabla."""
@@ -25,7 +24,7 @@ def generar_codigo_secuencial(db: Session, modelo, campo: str, prefijo: str, anc
 def generar_numero_comprobante(db: Session, modelo, campo: str = "numero_comprobante") -> str:
     """Genera un comprobante con fecha y secuencia global."""
 
-    fecha = datetime.utcnow().strftime("%Y%m%d")
+    fecha = ahora_utc().strftime("%Y%m%d")
     siguiente = db.query(modelo).count() + 1
     atributo = getattr(modelo, campo)
     codigo = f"COMP-{fecha}-{siguiente:06d}"
@@ -33,4 +32,3 @@ def generar_numero_comprobante(db: Session, modelo, campo: str = "numero_comprob
         siguiente += 1
         codigo = f"COMP-{fecha}-{siguiente:06d}"
     return codigo
-

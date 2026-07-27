@@ -9,10 +9,12 @@ from sqlalchemy.orm import Session
 
 from app.controladores import usuario_controlador
 from app.database import obtener_db
+from app.dependencias import requerir_roles
 from app.esquemas.usuario_esquema import UsuarioActualizar, UsuarioCrear, UsuarioRespuesta
+from app.modelos.usuario_modelo import RolUsuario
 
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(requerir_roles(RolUsuario.ADMINISTRADOR))])
 
 
 @router.post("", response_model=UsuarioRespuesta, summary="Crear usuario")
@@ -55,4 +57,3 @@ def desactivar(id: int, db: Session = Depends(obtener_db)):
     """Desactiva un usuario e impide que inicie sesion."""
 
     return usuario_controlador.desactivar(db, id)
-

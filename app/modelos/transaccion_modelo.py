@@ -5,12 +5,12 @@ Version: 1.0
 """
 
 import enum
-from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+from app.utilidades.fechas import ahora_utc
 
 
 class TipoTransaccion(str, enum.Enum):
@@ -30,7 +30,7 @@ class Transaccion(Base):
     numero_comprobante = Column(String(50), unique=True, nullable=False, index=True)
     tipo_transaccion = Column(Enum(TipoTransaccion), nullable=False)
     monto = Column(Numeric(12, 2), nullable=False)
-    fecha = Column(DateTime, default=datetime.utcnow, nullable=False)
+    fecha = Column(DateTime, default=ahora_utc, nullable=False)
     descripcion = Column(String(250), nullable=True)
     saldo_resultante = Column(Numeric(12, 2), nullable=False)
     cuenta_id = Column(Integer, ForeignKey("cuentas_ahorro.id"), nullable=False)
@@ -39,4 +39,3 @@ class Transaccion(Base):
     cuenta = relationship("CuentaAhorro", back_populates="transacciones")
     usuario_cajero = relationship("Usuario", foreign_keys=[usuario_cajero_id], back_populates="transacciones_cajero")
     asiento_contable = relationship("AsientoContable", back_populates="transaccion", uselist=False)
-

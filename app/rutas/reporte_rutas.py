@@ -9,10 +9,23 @@ from sqlalchemy.orm import Session
 
 from app.controladores import reporte_controlador
 from app.database import obtener_db
+from app.dependencias import requerir_roles
 from app.esquemas.reporte_esquema import ReporteCarteraCreditos, ReporteHistorialAhorros, ReporteLibroDiario, ReporteResumenAportaciones
+from app.modelos.usuario_modelo import RolUsuario
 
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[
+        Depends(
+            requerir_roles(
+                RolUsuario.ADMINISTRADOR,
+                RolUsuario.GERENTE,
+                RolUsuario.CAJERO,
+                RolUsuario.CONTADOR,
+            )
+        )
+    ]
+)
 
 
 @router.get("/libro-diario", response_model=ReporteLibroDiario, summary="Reporte de libro diario")
@@ -41,4 +54,3 @@ def resumen_aportaciones(socio_id: int, db: Session = Depends(obtener_db)):
     """Devuelve aportaciones totalizadas por tipo."""
 
     return reporte_controlador.resumen_aportaciones(db, socio_id)
-

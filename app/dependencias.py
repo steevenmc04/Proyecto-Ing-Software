@@ -9,6 +9,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from app.database import obtener_db
+from app.modelos.usuario_modelo import RolUsuario
 from app.repositorios.usuario_repositorio import usuario_repositorio
 from app.utilidades.seguridad import decodificar_token
 
@@ -28,3 +29,17 @@ def obtener_usuario_actual(token: str = Depends(oauth2_scheme), db: Session = De
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Usuario no autorizado")
     return usuario
 
+
+def requerir_roles(*roles_permitidos: RolUsuario):
+    """Crea una dependencia que autoriza unicamente los roles indicados."""
+
+    def validar_rol(usuario=Depends(obtener_usuario_actual)):
+        if usuario.rol not in roles_permitidos:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="No tiene permisos para realizar esta operacion",
+            )
+        return usuario
+
+    validar_rol.roles_permitidos = tuple(rol.value for rol in roles_permitidos)
+    return validar_rol

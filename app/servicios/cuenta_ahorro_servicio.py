@@ -8,8 +8,10 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.config import obtener_configuracion
+from app.database import confirmar_transaccion
 from app.esquemas.cuenta_ahorro_esquema import CuentaMovimientosExternoRespuesta, MovimientoExternoRespuesta
 from app.modelos.cuenta_ahorro_modelo import CuentaAhorro, EstadoCuenta
+from app.modelos.socio_modelo import EstadoSocio
 from app.modelos.usuario_modelo import RolUsuario
 from app.repositorios.cuenta_ahorro_repositorio import cuenta_ahorro_repositorio
 from app.repositorios.socio_repositorio import socio_repositorio
@@ -23,8 +25,14 @@ class CuentaAhorroServicio:
     def crear(self, db: Session, socio_id: int):
         """Crea una cuenta con saldo inicial cero."""
 
-        if not socio_repositorio.obtener(db, socio_id):
+        socio = socio_repositorio.obtener(db, socio_id)
+        if not socio:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Socio no encontrado")
+        if socio.estado != EstadoSocio.ACTIVO:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No se puede abrir una cuenta para un socio inactivo",
+            )
         cuenta = CuentaAhorro(
             numero_cuenta=generar_codigo_secuencial(db, CuentaAhorro, "numero_cuenta", "CTA"),
             socio_id=socio_id,
@@ -75,8 +83,13 @@ class CuentaAhorroServicio:
         """Cambia estado operativo de la cuenta."""
 
         cuenta = self.obtener(db, cuenta_id)
+        if estado == EstadoCuenta.CERRADA and cuenta.saldo != 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No se puede cerrar una cuenta con saldo distinto de cero",
+            )
         cuenta.estado = estado
-        db.commit()
+        confirmar_transaccion(db)
         db.refresh(cuenta)
         return cuenta
 
@@ -85,6 +98,11 @@ class CuentaAhorroServicio:
 
         if cuenta.estado in [EstadoCuenta.BLOQUEADA, EstadoCuenta.CERRADA]:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No se permiten operaciones en cuentas bloqueadas o cerradas")
+        if cuenta.socio.estado != EstadoSocio.ACTIVO:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No se permiten operaciones para un socio inactivo",
+            )
 
     def consultar_api_externa(self, db: Session, cedula: str, numero_cuenta: str, api_key: str | None):
         """Valida API Key y devuelve saldo mas ultimos tres movimientos reales."""
