@@ -257,6 +257,15 @@ Incluir los doce flujos E2E:
 powershell -ExecutionPolicy Bypass -File .\scripts\verificar.ps1 -IncluirE2E
 ```
 
+Regenerar evidencias de calidad e informe PDF:
+
+```powershell
+Set-Location frontend
+npm run evidencias:calidad
+Set-Location ..
+python scripts\generar_informe_pdf.py
+```
+
 Comandos individuales:
 
 ```powershell
@@ -327,6 +336,7 @@ URL correspondiente.
 - [Guion de exposicion](docs/GUION_EXPOSICION.md)
 - [Checklist](docs/CHECKLIST_ENTREGA.md)
 - [Informe final](docs/entrega/TFINAL_Grupo01_MartinezSteeven.md)
+- [Informe final PDF](docs/entrega/TFINAL_Grupo01_MartinezSteeven.pdf)
 
 ## Riesgos residuales
 

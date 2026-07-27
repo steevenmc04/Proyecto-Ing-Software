@@ -13,17 +13,21 @@ const python = process.env.PYTHON || "python";
 
 const limpiarAnsi = (texto) =>
   texto
-    .replace(/\u001b\[[0-9;]*m/g, "")
+    .replace(/\u001b\[[0-?]*[ -/]*[@-~]/g, "")
     .replace(/\r/g, "")
     .trim();
 
 function ejecutar(nombre, comando, argumentos, cwd) {
-  const resultado = spawnSync(comando, argumentos, {
+  const usaCmd = process.platform === "win32" && comando === npm;
+  const ejecutable = usaCmd ? process.env.ComSpec || "cmd.exe" : comando;
+  const argumentosReales = usaCmd
+    ? ["/d", "/s", "/c", [comando, ...argumentos].join(" ")]
+    : argumentos;
+  const resultado = spawnSync(ejecutable, argumentosReales, {
     cwd,
     encoding: "utf8",
     env: { ...process.env, FORCE_COLOR: "0", NO_COLOR: "1" },
     maxBuffer: 20 * 1024 * 1024,
-    shell: process.platform === "win32" && comando === npm,
   });
   const salida = limpiarAnsi(
     [resultado.stdout, resultado.stderr].filter(Boolean).join("\n"),
